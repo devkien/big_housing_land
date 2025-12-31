@@ -1,0 +1,4676 @@
+/* --- CÀI ĐẶT CHUNG (RESET) --- */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --primary-blue: #0137AE;
+    /* Header, Button, Gradient start */
+    --text-black: #000000;
+    /* Chữ chính */
+    --text-gray: #888787;
+    /* Chữ phụ, Viền, Icon xám */
+    --bg-white: #FFFFFF;
+    /* Nền trắng */
+    --accent-blue: #158EFF;
+    /* Nền input màn login */
+}
+
+
+/* =========================
+   UNIFIED ALERT – PRO STYLE
+   ========================= */
+
+.alert-wrapper {
+    max-width: 920px;
+    margin: 14px auto 18px;
+    padding: 0 12px;
+}
+
+.alert {
+    border-radius: 10px;
+    background: #FFFFFF;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+    overflow: hidden;
+    animation: alertFadeIn 0.25s ease-out;
+}
+
+@keyframes alertFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.alert-icon {
+    font-size: 18px;
+    width: 26px;
+    margin-top: 2px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.alert-message {
+    flex: 1;
+    color: #0F172A;
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 500;
+}
+
+.alert-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: rgba(15, 23, 42, 0.4);
+    padding: 2px 6px;
+    line-height: 1;
+}
+
+.alert-close:hover {
+    color: rgba(15, 23, 42, 0.7);
+}
+
+/* ===== ALERT TYPES ===== */
+
+.alert--success {
+    background: linear-gradient(90deg, rgba(22, 163, 74, 0.06), rgba(255, 255, 255, 0));
+    border-left: 4px solid #16A34A;
+}
+
+.alert--error {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.06), rgba(255, 255, 255, 0));
+    border-left: 4px solid #DC2626;
+}
+
+.alert--warning {
+    background: linear-gradient(90deg, rgba(217, 119, 6, 0.06), rgba(255, 255, 255, 0));
+    border-left: 4px solid #D97706;
+}
+
+.alert--info {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.06), rgba(255, 255, 255, 0));
+    border-left: 4px solid #2563EB;
+}
+
+/* Icon colors */
+.alert--success .alert-icon {
+    color: #16A34A;
+}
+
+.alert--error .alert-icon {
+    color: #DC2626;
+}
+
+.alert--warning .alert-icon {
+    color: #D97706;
+}
+
+.alert--info .alert-icon {
+    color: #2563EB;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 480px) {
+    .alert-inner {
+        padding: 10px 12px;
+    }
+
+    .alert-message {
+        font-size: 13px;
+    }
+}
+
+/* =========================
+   END OF UNIFIED ALERT STYLE
+   ========================= */
+
+
+/* =========================
+   Modal-specific button adjustments to keep consistent size across project
+   ========================= */
+.modal .btn-save {
+    width: auto;
+    padding: 8px 24px;
+    margin: 0;
+}
+
+.modal .btn-save.btn-danger {
+    background-color: #ff3333;
+}
+
+.modal .btn-cancel {
+    padding: 8px 20px;
+    margin: 0;
+}
+
+/* =========================
+   END OF MODAL BUTTON ADJUSTMENTS
+   ========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 2;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: var(--bg-gray);
+    min-height: 100vh;
+}
+
+/* Container chung để giả lập App trên PC */
+.app-container {
+    max-width: 100%;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: white;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* --- PHẦN 1: MÀN HÌNH ĐĂNG NHẬP (LOGIN) --- */
+.login-page {
+    background: linear-gradient(180deg, #0137AE 0%, #158EFF 33%, #000557 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.logo-icon {
+    font-size: 60px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Thay bằng ảnh thật nếu có */
+
+.logo-login {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 0;
+}
+
+/* Ảnh 1 (toanha1) làm nền full màn hình dưới cùng */
+.logo-login:nth-child(2) {
+    top: 0;
+    height: 100%;
+}
+
+/* Ảnh 2 (toanha2) nằm bên dưới, đè lên ảnh 1 */
+.logo-login:nth-child(3) {
+    bottom: 0;
+    height: 50%;
+}
+
+.logo-login img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1;
+}
+
+.logo-login:nth-child(3) img {
+    object-position: bottom;
+}
+
+.app-name {
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.login-form {
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    z-index: 2;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ddd;
+}
+
+.input-group .toggle-password {
+    left: auto;
+    right: 15px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.5);
+    /* Màu nhạt hơn (độ trong suốt 50%) */
+    transition: color 0.3s;
+}
+
+.input-group .toggle-password:hover {
+    color: #ffffff;
+    /* Sáng lên khi di chuột vào */
+}
+
+.input-field {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+}
+
+.input-field::placeholder {
+    color: #ffffff;
+}
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 25px;
+    padding: 0 10px;
+}
+
+.login-options a {
+    color: white;
+    text-decoration: none;
+}
+
+.login-options input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ffffff;
+    background-color: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-options input[type="checkbox"]:checked::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: #FFFFFF;
+    /* Nền trắng để nổi bật trên nền xanh */
+    color: #0137AE;
+    /* Chữ xanh đậm thương hiệu */
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.register-link {
+    font-size: 14px;
+    margin-top: 10px;
+    cursor: pointer;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* Giả lập thành phố ở footer login */
+.city-bg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    /* Ảnh mockup thành phố */
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* --- PHẦN 2: MÀN HÌNH TRANG CHỦ (HOME) --- */
+.home-page {
+    background: var(--bg-gray);
+    padding-bottom: 80px;
+}
+
+/* Header */
+.home-header {
+    background: var(--primary-blue);
+    padding: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: flex-end;
+    color: white;
+    font-size: 12px;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.search-bar {
+    background: #002a80;
+    border-radius: 20px;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    flex: 1;
+    margin-right: 10px;
+}
+
+/* Grid Menu */
+.menu-section {
+    padding: 20px 10px;
+    background: #E8F4FF;
+    margin-bottom: 10px;
+}
+
+.grid-menu {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px 5px;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.icon-box {
+    width: 45px;
+    height: 45px;
+    /* Icon xanh trên nền trắng (hoặc trong suốt) như ảnh */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--primary-blue);
+    margin-bottom: 5px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+}
+
+.menu-item span {
+    font-size: 11px;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.2;
+}
+
+/* Banner */
+.banner-section {
+    padding: 10px;
+    text-align: center;
+}
+
+/* Banner image styles - support both class names used in views */
+.banner-img,
+.banner-images {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+}
+
+/* News Feed */
+.news-section {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.btn-news-title {
+    background: #003399;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 15px;
+    width: 100%;
+    display: block;
+}
+
+.news-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+    scrollbar-width: none;
+}
+
+.news-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.news-card {
+    min-width: 85%;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.news-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.news-info h4 {
+    font-size: 13px;
+    margin: 0;
+}
+
+.news-info span {
+    font-size: 10px;
+    color: #888;
+}
+
+.news-body p {
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.doc-preview {
+    background: #fcfcfc;
+    border: 1px solid #ddd;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 5px;
+    font-size: 10px;
+    color: #aaa;
+}
+
+/* Ensure inline images (documents, banners, previews) do not overflow their containers */
+.doc-preview-images,
+.banner-images,
+.news-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    height: 60px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #eee;
+    z-index: 100;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 20px;
+    gap: 10px;
+}
+
+.nav-item i {
+    font-size: 30px;
+}
+
+.nav-item img {
+    width: 50px;
+    /* Kích thước hiển thị trên màn hình */
+    height: 50px;
+    object-fit: contain;
+    /* Giữ nguyên tỉ lệ ảnh, không bị méo */
+    display: block;
+}
+
+.nav-item.active {
+    color: var(--primary-blue);
+}
+
+/* --- RESPONSIVE TABLET & PC (Width > 768px) --- */
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 100%;
+        /* Cho phép tràn viền trên Tablet/iPad */
+        box-shadow: none;
+    }
+
+    /* Slightly reduce banner max width on tablet to keep comfortable margins */
+    .banner-img,
+    .banner-images {
+        max-width: 640px;
+    }
+
+    /* Login Tablet */
+    .login-form {
+        max-width: 500px;
+    }
+
+    .input-field {
+        padding: 18px 18px 18px 50px;
+        font-size: 16px;
+    }
+
+    /* Home Tablet */
+    .grid-menu {
+        gap: 30px 15px;
+        padding: 20px;
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+    }
+
+    .menu-item span {
+        font-size: 13px;
+    }
+
+    /* Bảng tin Tablet: Chuyển từ cuộn ngang sang lưới 2 cột */
+    .news-scroll {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: visible;
+    }
+
+    .news-card {
+        min-width: auto;
+    }
+
+    /* Bottom Nav nằm trong khung */
+    .bottom-nav {
+        max-width: 100%;
+        left: 0;
+        transform: none;
+    }
+}
+
+/* --- PHẦN 3: MÀN HÌNH ĐĂNG KÝ (REGISTER) - Nền Trắng --- */
+.register-page {
+    background-color: white;
+    min-height: 100vh;
+    padding-top: 60px;
+    /* Chừa chỗ cho header */
+    padding-bottom: 30px;
+}
+
+/* Header xanh riêng cho trang đăng ký */
+.register-header {
+    background-color: #0033cc;
+    /* Màu xanh đậm như ảnh */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Căn đều 2 bên */
+    padding: 0 15px;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    max-width: 768px;
+    /* Giới hạn nếu xem trên PC */
+    margin: 0 auto;
+}
+
+.register-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    margin-right: 20px;
+}
+
+.back-btn {
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Tiêu đề từng phần (1. Thông tin đăng nhập...) */
+.section-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    margin: 20px 5px 10px 5px;
+}
+
+/* Kiểu 1: Ô nhập liệu có khung viền (Box Style) */
+.reg-box-input {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    /* Bo góc 4px cho ô nhập liệu trang Đăng ký */
+    padding: 10px 12px;
+    margin: 0 5px 5px 5px;
+    /* Margin bottom 5px để chừa chỗ cho bộ đếm */
+    background: white;
+}
+
+.reg-box-input i {
+    color: #0044cc;
+    width: 25px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.reg-box-input input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+}
+
+.reg-box-input input::placeholder {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Bộ đếm ký tự (0/10, 0/50) */
+.char-count {
+    text-align: right;
+    font-size: 11px;
+    color: #666;
+    margin: 0 5px 10px 5px;
+    font-weight: 600;
+}
+
+/* Kiểu 2: Ô chọn dạng gạch chân (Underline Style - Giới tính, Phòng ban) */
+.reg-line-select {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #888;
+    padding: 10px 0;
+    margin: 0 5px 15px 5px;
+    position: relative;
+}
+
+.reg-line-select i.icon-left {
+    color: #0044cc;
+    width: 25px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.reg-line-select select {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    background: transparent;
+    appearance: none;
+    /* Ẩn mũi tên mặc định */
+}
+
+.reg-line-select i.arrow-right {
+    color: #000;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Nút Lưu màu xanh đậm */
+.btn-save {
+    background-color: #0033cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    /* Bo góc 4px cho nút Lưu/Gửi */
+    padding: 12px;
+    margin: 30px 5px;
+    width: calc(100% - 10px);
+    /* Full width trừ padding */
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* --- PHẦN 4: MÀN HÌNH QUÊN MẬT KHẨU (FORGOT PASSWORD) --- */
+
+/* Input riêng cho trang này (Nền trắng, có viền) */
+.forgot-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    /* Viền xám nhạt */
+    border-radius: 10px;
+    /* Bo góc nhẹ giống ảnh */
+    padding: 12px 15px;
+    background: white;
+    margin-bottom: 20px;
+}
+
+.forgot-input-group i {
+    color: #0033cc;
+    /* Icon bì thư màu xanh */
+    font-size: 16px;
+    margin-right: 12px;
+}
+
+.forgot-input-group input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    color: #000;
+}
+
+.forgot-input-group input::placeholder {
+    color: #888;
+    font-weight: 600;
+}
+
+/* Nút quay lại đăng nhập ở dưới cùng */
+.back-login-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+}
+
+.back-login-link i {
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+/* --- PHẦN 5: MÀN HÌNH THÔNG TIN NỘI BỘ (INFO) --- */
+
+/* Header đơn giản (chỉ có tiêu đề ở giữa) */
+.simple-blue-header {
+    background-color: #0033cc;
+    color: white;
+    text-align: center;
+    padding: 18px 15px;
+    font-size: 17px;
+    font-weight: 600;
+    position: sticky;
+    /* Ghim lên đỉnh khi cuộn */
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Container danh sách */
+.info-list {
+    padding: 15px;
+}
+
+/* Thẻ bài viết (Card) */
+.info-card {
+    background: white;
+    border-radius: 12px;
+    /* Bo góc mềm mại */
+    overflow: hidden;
+    /* Để ảnh không bị tràn ra ngoài góc bo */
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    /* Đổ bóng nhẹ */
+    border: 1px solid #f0f0f0;
+}
+
+.info-thumb {
+    width: 100%;
+    height: 200px;
+    /* Chiều cao cố định cho ảnh đều nhau */
+    object-fit: cover;
+    /* Cắt ảnh vừa khung mà không bị méo */
+    display: block;
+}
+
+.info-body {
+    padding: 15px;
+}
+
+.info-date {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.info-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.info-desc {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.5;
+}
+
+/* Style riêng cho các dòng chi tiết như Thời gian, Địa điểm */
+.info-meta-line {
+    display: block;
+    margin-bottom: 4px;
+}
+
+/* --- CẤU HÌNH RIÊNG CHO PC (Màn hình lớn > 1024px) --- */
+/* Đảm bảo Header đăng ký cũng full viền trên Tablet */
+@media (min-width: 768px) {
+    .register-header {
+        max-width: 100%;
+    }
+}
+
+/* Chỉ giới hạn khung hình khi màn hình thực sự lớn (PC) */
+@media (min-width: 1025px) {
+    .app-container {
+        max-width: 768px;
+        margin: 0 auto;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Sửa lỗi lệch menu trên PC: Dùng margin auto thay vì transform */
+    .bottom-nav {
+        max-width: 768px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        transform: none;
+    }
+
+    .register-header {
+        max-width: 768px;
+    }
+}
+
+/* --- CSS CHO TRANG CHỦ (HOME) --- */
+
+/* Header */
+.home-header {
+    background-color: #0044cc;
+    /* Xanh đậm thương hiệu */
+    padding: 10px 15px 15px 15px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.search-bar {
+    background: #003399;
+    /* Màu nền thanh search đậm hơn header chút */
+    border-radius: 20px;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.search-bar input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    flex: 1;
+    font-size: 14px;
+}
+
+.search-bar input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.search-bar i {
+    color: white;
+    font-size: 16px;
+}
+
+/* Grid Menu (8 Icon) */
+.menu-section {
+    padding: 20px 10px;
+    background: #E8F4FF;
+}
+
+.grid-menu {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 cột đều nhau */
+    gap: 20px 8px;
+    /* Khoảng cách hàng 20px, cột 8px */
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    /* Bóng mờ nhẹ */
+    margin-bottom: 8px;
+}
+
+/* Màu icon: Xanh đậm */
+.icon-box i {
+    font-size: 28px;
+    /* Tăng kích thước để icon rõ nét hơn */
+    color: #0033cc;
+}
+
+.menu-item span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.3;
+}
+
+/* Banner */
+.banner-section {
+    padding: 0 15px;
+    margin-bottom: -5px;
+}
+
+.banner-img {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Bảng tin (News) */
+.news-section {
+    padding: 0 15px 80px 15px;
+    /* Padding bottom lớn để không bị menu che */
+}
+
+.btn-news-header {
+    background: #0033cc;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 14px;
+    width: 50%;
+    margin: 0 auto 15px auto;
+    /* Chiếm 50% và căn giữa */
+}
+
+.news-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 5px;
+    scrollbar-width: thin;
+    /* Hiển thị thanh cuộn mảnh trên Firefox */
+    scrollbar-color: #0137AE #f0f0f0;
+}
+
+.news-scroll::-webkit-scrollbar {
+    height: 4px;
+    display: block;
+}
+
+/* Hiển thị trên Chrome/Safari */
+.news-scroll::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 2px;
+}
+
+.news-scroll::-webkit-scrollbar-thumb {
+    background: #0137AE;
+    border-radius: 2px;
+}
+
+.news-card {
+    min-width: 85%;
+    /* Chiều rộng thẻ tin để có thể cuộn ngang */
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 0;
+}
+
+/* Đảm bảo trên Tablet/PC vẫn hiển thị dạng lưới nếu cần */
+@media (min-width: 768px) {
+    .news-scroll {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: visible;
+    }
+
+    .news-card {
+        min-width: auto;
+    }
+}
+
+.news-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.news-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+}
+
+.news-info span {
+    font-size: 11px;
+    color: #888;
+}
+
+.news-content p {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.see-more {
+    color: #0033cc;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+/* Ảnh văn bản đính kèm */
+.doc-preview-img {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+/* --- PHẦN 6: KHO TÀI NGUYÊN (RESOURCE PAGE) --- */
+
+/* Header trắng riêng biệt */
+.resource-header {
+    background-color: white;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.resource-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+
+.header-icon-btn {
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Tabs chuyển đổi (Kho nhà đất / Kho cho thuê) */
+.tabs-container {
+    padding: 15px;
+    background: white;
+    display: flex;
+    gap: 35px;
+    justify-content: center;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-btn {
+    width: 35%;
+    padding: 7px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.tab-btn.active {
+    background-color: #0033cc;
+    color: white;
+}
+
+.tab-btn.inactive {
+    background-color: white;
+    color: #333;
+}
+
+/* Thanh công cụ (Lọc, Tìm kiếm...) */
+.toolbar-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 15px 15px 15px;
+    background: white;
+    gap: 10px;
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: 12px;
+    background: white;
+    color: #333;
+    font-weight: 500;
+    white-space: nowrap;
+    /* Không xuống dòng */
+}
+
+.tool-btn i {
+    margin-right: 5px;
+    font-size: 11px;
+}
+
+.tool-btn.tin {
+    border-radius: 5px;
+}
+
+/* Bảng dữ liệu */
+.table-wrapper {
+    background: white;
+    overflow-x: auto;
+    /* Cho phép cuộn ngang nếu bảng quá rộng */
+    margin-bottom: 80px;
+    /* Chừa chỗ cho menu dưới */
+}
+
+.resource-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    /* Chữ nhỏ để vừa màn hình */
+    min-width: 100%;
+    /* Đảm bảo bảng full màn hình */
+}
+
+/* Tiêu đề bảng */
+.resource-table thead th {
+    text-align: left;
+    padding: 12px 5px;
+    color: #333;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+}
+
+/* Dòng dữ liệu */
+.resource-table td {
+    padding: 12px 5px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #000;
+    font-weight: 500;
+}
+
+/* Con trỏ chuột khi di vào dòng */
+.resource-table tbody tr {
+    cursor: pointer;
+}
+
+/* Hiệu ứng sọc ngựa vằn (Dòng chẵn màu xám nhạt) */
+.resource-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Dòng đang chọn (Có viền xanh bao quanh) */
+.row-active {
+    background-color: #f0f8ff !important;
+    /* Nền xanh nhạt */
+    z-index: 10;
+    position: relative;
+}
+
+/* Badge trạng thái (Bán mạnh) */
+.status-badge {
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-size: 10px;
+    background: #fdfdfd;
+    white-space: nowrap;
+}
+
+/* Badge Bán mạnh nền trong suốt để trùng màu với dòng */
+.status-badge.strong {
+    background-color: transparent;
+}
+
+/* Status color variants */
+.status-badge--ban_manh {
+    /* Changed from green to red to increase attention */
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(220, 38, 38, 0.25);
+    color: #991b1b;
+    /* dark red */
+}
+
+.status-badge--tam_dung_ban {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(245, 158, 11, 0.25);
+    color: #92400e;
+    /* amber/dark orange */
+}
+
+.status-badge--dung_ban {
+    background: linear-gradient(90deg, rgba(107, 114, 128, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(107, 114, 128, 0.18);
+    color: #374151;
+    /* gray */
+}
+
+.status-badge--da_ban {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(220, 38, 38, 0.18);
+    color: #991b1b;
+    /* red */
+}
+
+.status-badge--tang_chao {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(59, 130, 246, 0.18);
+    color: #1e40af;
+    /* blue */
+}
+
+.status-badge--ha_chao {
+    background: linear-gradient(90deg, rgba(124, 58, 237, 0.06), rgba(255, 255, 255, 0));
+    border-color: rgba(124, 58, 237, 0.18);
+    color: #5b21b6;
+    /* purple */
+}
+
+/* Badge Bán mạnh: Dòng trắng giữ nguyên, dòng xám (chẵn) thì viền đỏ */
+.resource-table tbody tr:nth-child(even) .status-badge.strong {
+    border: 1px solid #E8F4FF;
+    color: #000;
+}
+
+/* Icon trong bảng */
+.icon-save {
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+}
+
+.icon-note {
+    font-size: 16px;
+    color: #ffcc00;
+}
+
+/* Màu vàng icon ghi chú */
+
+/* --- MODAL LỌC (FILTER POPUP) --- */
+.modal {
+    display: none;
+    /* Mặc định ẩn */
+    position: fixed;
+    z-index: 200;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Nền đen mờ */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #333;
+}
+
+.filter-input,
+.filter-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    color: #000;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    background: #f0f0f0;
+    color: #333;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* ==========================
+   HR FILTER / SEARCH MODAL
+   Polished styles to match app theme
+   ========================== */
+
+#hr-filter-modal .modal-content,
+#hr-search-modal .modal-content {
+    max-width: 420px;
+    width: 92%;
+    padding: 18px 18px 16px;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+    border: 1px solid rgba(1, 55, 174, 0.06);
+}
+
+#hr-filter-modal h3,
+#hr-search-modal h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--primary-blue);
+}
+
+#hr-filter-modal label,
+#hr-search-modal label {
+    display: block;
+    font-size: 13px;
+    color: #263244;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+#hr-filter-modal input[type="text"],
+#hr-search-modal input[type="text"],
+#hr-filter-modal select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e6e9ef;
+    background: #fbfdff;
+    font-size: 14px;
+    color: #0f172a;
+    outline: none;
+    transition: box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+#hr-filter-modal input[type="text"]::placeholder,
+#hr-search-modal input[type="text"]::placeholder {
+    color: #9aa3b2;
+}
+
+#hr-filter-modal input[type="text"]:focus,
+#hr-search-modal input[type="text"]:focus,
+#hr-filter-modal select:focus {
+    border-color: rgba(1, 55, 174, 0.18);
+    box-shadow: 0 6px 18px rgba(1, 55, 174, 0.06);
+}
+
+.modal-actions.row-center {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+#hr-filter-modal .btn-save,
+#hr-search-modal .btn-save {
+    background: var(--primary-blue);
+    color: #fff;
+    padding: 10px 26px;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(1, 55, 174, 0.12);
+}
+
+#hr-filter-modal .btn-cancel,
+#hr-search-modal .btn-cancel {
+    background: #f3f4f6;
+    color: #1f2937;
+    padding: 9px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Small-screen tweaks */
+@media (max-width: 420px) {
+
+    #hr-filter-modal .modal-content,
+    #hr-search-modal .modal-content {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    #hr-filter-modal h3,
+    #hr-search-modal h3 {
+        font-size: 15px;
+    }
+}
+
+/* ==========================
+   END HR FILTER / SEARCH MODAL
+   Polished styles to match app theme
+   ========================== */
+.btn-apply {
+    background: #0033cc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* --- PHẦN 7: MÀN HÌNH CHI TIẾT (DETAIL FEED) --- */
+
+/* Header trắng (Dùng lại style cũ nhưng đổi tên class cho dễ quản lý) */
+.detail-header {
+    background-color: white;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.detail-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+
+/* Thẻ bài đăng (Post Card) */
+.post-card {
+    background: white;
+    margin-bottom: 10px;
+    padding-top: 15px;
+    border-bottom: 8px solid #f2f4f8;
+    /* Tạo khoảng cách xám giữa các bài */
+}
+
+/* Hàng thông tin người đăng */
+.user-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 15px;
+    margin-bottom: 10px;
+}
+
+.user-left {
+    display: flex;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.user-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 4px;
+}
+
+.rating-stars {
+    font-size: 10px;
+    color: #ffcc00;
+    /* Màu vàng sao */
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Các icon liên hệ nhỏ (Messenger, Zalo, Phone) */
+.contact-icons {
+    display: flex;
+    gap: 8px;
+    margin-left: 8px;
+}
+
+.c-icon {
+    font-size: 14px;
+}
+
+.icon-mess {
+    color: #a334fa;
+}
+
+/* Tím Messenger */
+.icon-zalo {
+    color: #0068ff;
+}
+
+/* Xanh Zalo */
+.icon-phone {
+    color: #00c853;
+}
+
+/* Xanh lá gọi điện */
+
+/* Nút trạng thái (Bán mạnh) góc phải */
+.btn-status-outline {
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    height: fit-content;
+    color: #333;
+}
+
+/* Hàng Giá và Tags */
+.price-tag-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 10px;
+}
+
+.price-text {
+    color: #00c853;
+    /* Xanh lá giá tiền */
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.tags-group {
+    display: flex;
+    gap: 5px;
+}
+
+.tag-gray {
+    background: #e0e0e0;
+    color: #333;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 2px;
+}
+
+/* Nội dung bài đăng */
+.post-content {
+    padding: 0 15px;
+    font-size: 13px;
+    color: #000;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+.link-blue {
+    color: #0068ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.hashtag {
+    color: #0099ff;
+}
+
+/* Hàng Sổ đỏ & Mã số */
+.meta-row {
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    font-size: 12px;
+}
+
+.red-badge {
+    border: 1px solid #ff3333;
+    color: #ff3333;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #fff5f5;
+    font-size: 11px;
+}
+
+.code-text {
+    color: #333;
+    font-weight: 600;
+}
+
+.code-number {
+    color: #0068ff;
+}
+
+/* Ảnh bài đăng */
+.post-image-large {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+
+/* --- PHẦN 8: MÀN HÌNH THÔNG BÁO VỤ CHỐT --- */
+
+/* Thanh công cụ tạo bài viết (Create Post Bar) */
+.create-post-bar {
+    background: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Nút Tạo bài viết (Viền xanh) */
+.btn-create-post {
+    border: 1px solid #0044cc;
+    color: #0044cc;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Khoảng cách giữa icon cộng và chữ */
+    cursor: pointer;
+}
+
+/* Icon kính lúp to bên phải */
+.icon-search-large {
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}
+
+/* Style riêng cho user trong trang này (đơn giản hơn trang Chi tiết) */
+.notify-user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.notify-time {
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+}
+
+/* Nội dung text bài viết */
+.notify-content {
+    padding: 0 15px;
+    font-size: 13px;
+    color: #111;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* --- PHẦN 9: MÀN HÌNH ĐĂNG TIN (POST LISTING) --- */
+
+/* Tiêu đề từng nhóm (Người đăng, Thông tin BĐS...) */
+.form-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin: 15px 15px 8px 15px;
+}
+
+/* Label nhỏ trên đầu input (nếu cần) hoặc placeholder */
+/* Trong ảnh chủ yếu dùng placeholder, nhưng có vài chỗ cần label */
+.required-star {
+    color: red;
+    margin-left: 2px;
+}
+
+/* Ô nhập liệu chuẩn */
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    outline: none;
+    color: #333;
+    color: #000;
+    background: white;
+}
+
+.form-input::placeholder {
+    color: #666;
+    font-weight: 500;
+}
+
+/* Tùy chỉnh mũi tên hình tam giác cho select form-input */
+select.form-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+    padding-right: 30px;
+    /* Chừa chỗ cho icon không bị chữ đè lên */
+}
+
+
+/* Wrapper cho một dòng nhập liệu (để chỉnh margin) */
+.form-group {
+    margin: 0 15px 10px 15px;
+}
+
+/* Dòng 2 cột (Ví dụ: Chiều ngang - Chiều dài) */
+.form-row-2col {
+    display: flex;
+    gap: 10px;
+    margin: 0 15px 10px 15px;
+}
+
+.col-half {
+    flex: 1;
+}
+
+/* Dropdown đơn vị (m2, Tỷ...) nằm cạnh input */
+.input-with-unit {
+    display: flex;
+    gap: 10px;
+}
+
+.unit-select {
+    width: 80px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 20px 0 30px;
+    background: white;
+    font-size: 13px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 10px;
+    margin-left: -20px;
+}
+
+/* Checkbox hiển thị số nhà */
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* Căn phải */
+    margin: 5px 15px 15px 15px;
+    font-size: 20px;
+    font-size: 13px;
+    color: #555;
+    gap: 5px;
+}
+
+/* Textarea mô tả */
+.form-textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: none;
+    /* Không cho kéo giãn */
+    font-size: 13px;
+    color: #000;
+}
+
+.char-counter {
+    text-align: right;
+    font-size: 11px;
+    color: #999;
+    margin-top: -22px;
+    margin-right: 10px;
+}
+
+/* Khung tải ảnh (Camera Upload) */
+.upload-box {
+    margin: 30px;
+    border: 1px dashed #0044cc;
+    /* Viền nét đứt màu xanh */
+    background-color: #f7f9fc;
+    /* Nền xanh rất nhạt */
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0044cc;
+    cursor: pointer;
+    width: 50%;
+    margin-left: 25%;
+}
+
+.upload-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.upload-text {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Nút XONG (Nút xanh to dưới cùng) */
+.btn-submit-blue {
+    display: block;
+    width: calc(100% - 30px);
+    margin: 20px 15px 30px 15px;
+    padding: 12px;
+    background-color: #0033cc;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Fake placeholder để tô màu dấu * trong input */
+.fake-placeholder {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: none;
+    /* Cho phép bấm xuyên qua để focus vào input */
+}
+
+/* Ẩn placeholder giả khi input được focus hoặc đã có dữ liệu */
+input.form-input:focus+.fake-placeholder,
+input.form-input:not(:placeholder-shown)+.fake-placeholder {
+    display: none;
+}
+
+/* Ẩn placeholder giả cho select khi đã có giá trị hợp lệ (đã chọn) */
+select.form-input:required:valid+.fake-placeholder {
+    display: none;
+}
+
+/* --- PHẦN 10: MÀN HÌNH DANH MỤC (PROFILE MENU) --- */
+
+/* Tiêu đề trang to đậm */
+.page-big-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #000000;
+    padding: 20px 15px 15px 15px;
+}
+
+/* Thẻ thành viên (Gradient xanh) */
+.profile-card-banner {
+    background: linear-gradient(135deg, #158EFF 0%, #0137AE 100%);
+    background: linear-gradient(135deg, #0137AE 0%, #158EFF 50%, #000557 100%);
+    margin: 0 15px 20px 15px;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 50, 150, 0.3);
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-avatar-large {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-right: 15px;
+}
+
+.profile-info h3 {
+    font-size: 25px;
+    font-weight: 1000;
+    margin: 0 0 4px 0;
+}
+
+.profile-role {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.office-badge {
+    background-color: #158EFF;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.arrow-right-absolute {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Lưới menu tắt (Quick Access Grid) */
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0 15px 20px 15px;
+}
+
+.quick-card {
+    background: #FFFFFF;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none;
+    /* Bỏ gạch chân thẻ a */
+    border: 1px solid #D9D9D9;
+}
+
+.quick-icon {
+    font-size: 24px;
+    color: #0137AE;
+}
+
+.quick-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #000000;
+}
+
+/* Danh sách cài đặt (Settings List) */
+.settings-group {
+    background: #FFFFFF;
+    margin: 0 15px 20px 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Để bo góc ko bị con đè lên */
+    border: 1px solid #D9D9D9;
+}
+
+/* Mục cài đặt cha */
+.setting-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: #F9F9F9;
+    cursor: pointer;
+    border-bottom: 1px solid #D9D9D9;
+}
+
+.setting-item-header .fa-chevron-up {
+    transition: transform 0.3s ease;
+}
+
+/* Trạng thái đóng (collapsed) */
+.settings-group.collapsed .sub-setting-item {
+    display: none;
+}
+
+.settings-group.collapsed .setting-item-header {
+    border-bottom: none;
+    /* Bỏ viền dưới khi đóng lại */
+}
+
+.settings-group.collapsed .setting-item-header .fa-chevron-up {
+    transform: rotate(180deg);
+    /* Xoay mũi tên xuống */
+}
+
+.setting-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000000;
+}
+
+.setting-icon {
+    color: #0137AE;
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Mục con (Sub item) */
+.sub-setting-item {
+    padding: 12px 15px 12px 45px;
+    /* Thụt lề trái */
+    border-bottom: 1px solid #D9D9D9;
+    font-size: 13px;
+    color: #000000;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.sub-setting-item:last-child {
+    border-bottom: none;
+}
+
+/* Nút Đăng xuất đỏ */
+.btn-logout {
+    display: block;
+    width: calc(100% - 30px);
+    margin: 10px 15px 30px 15px;
+    padding: 12px;
+    background-color: #F02800;
+    color: #FFFFFF;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* --- CÀI ĐẶT MÀU SẮC CHUẨN FIGMA --- */
+:root {
+    --primary-blue: #0137AE;
+    /* Header, Button chính */
+    --text-black: #000000;
+    /* Chữ chính */
+    --text-gray: #666666;
+    /* Chữ phụ */
+    --border-gray: #D9D9D9;
+    /* Viền, Placeholder */
+    --bg-white: #FFFFFF;
+    /* Nền trắng */
+    --link-blue: #158EFF;
+    /* Link, Icon Zalo/Mess */
+    --success-green: #7ED55E;
+    /* Giá tiền, Icon Phone */
+    --bg-light: #E8E3E3;
+    /* Nền xám tổng thể */
+}
+
+body {
+    background-color: var(--bg-white);
+    color: var(--text-black);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Áp dụng màu cho các thành phần cũ */
+.app-container {
+    background: var(--bg-white);
+}
+
+.register-header,
+.login-page,
+.home-header {
+    background: var(--primary-blue);
+}
+
+.btn-save,
+.btn-login,
+.btn-submit-blue {
+    background: var(--primary-blue);
+}
+
+.page-big-title {
+    background: var(--bg-white);
+    color: var(--text-black);
+}
+
+/* --- STYLE RIÊNG CHO TRANG CHI TIẾT HỒ SƠ (PROFILE DETAIL) --- */
+
+/* 1. Header trắng đơn giản */
+.profile-detail-header {
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    background: var(--bg-white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-black);
+}
+
+/* 2. Ảnh bìa & Avatar */
+.cover-wrapper {
+    position: relative;
+    margin-bottom: 50px;
+    /* Chừa chỗ cho avatar lồi xuống */
+}
+
+.cover-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid var(--bg-white);
+    position: absolute;
+    bottom: -40px;
+    /* Lồi xuống một nửa */
+    left: 20px;
+    object-fit: cover;
+    z-index: 10;
+}
+
+/* 3. Nút Chỉnh sửa hồ sơ (Nằm bên phải) */
+.edit-profile-btn {
+    position: absolute;
+    right: 15px;
+    bottom: -40px;
+    /* Căn ngang hàng với phần dưới avatar */
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+    background: var(--bg-white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+/* 4. Thông tin text */
+.profile-text-info {
+    padding: 0 20px;
+}
+
+.user-fullname {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.user-job-title {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.user-office {
+    font-size: 13px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.fb-link {
+    color: var(--link-blue);
+    font-size: 13px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+/* 5. Lưới thông tin chi tiết (Info Grid) */
+.info-grid {
+    display: flex;
+    justify-content: space-between;
+    /* Để ảnh CCCD sang phải */
+    padding: 0 20px 20px 20px;
+}
+
+.info-list-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Right column for profile details (rating + ID image) */
+.info-list-right {
+    width: 260px;
+    /* reserve space for stars and id image */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    margin: -70px 0 0px 0px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #444;
+    gap: 10px;
+}
+
+.info-row i {
+    width: 16px;
+    color: #333;
+    font-size: 14px;
+}
+
+/* Ảnh CCCD bên phải */
+.id-card-img {
+    width: 120px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border-gray);
+    margin-left: 10px;
+}
+
+.id-number-caption {
+    text-align: right;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 5px;
+    /* margin-right: 25px; */
+    /* Căn chỉnh cho khớp ảnh */
+}
+
+/* Responsive fix: ensure right column (rating + ID image) doesn't push layout off-screen
+   Make right column shrink on small devices (e.g. iPhone 13 Pro) and reduce image/star sizes
+   so rating and id-image can fit on one horizontal row without overflow. */
+@media (max-width: 420px) {
+    .info-grid {
+        align-items: flex-start;
+        gap: 8px;
+        padding: 0 12px 12px 12px;
+    }
+
+    .info-list-right {
+        /* allow it to shrink and not occupy fixed 260px */
+        width: auto !important;
+        max-width: 150px;
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        margin: -55px 0 0 0;
+    }
+
+    .id-card-img {
+        width: 92px !important;
+        height: 60px !important;
+        object-fit: cover;
+    }
+
+    .cover-rating-container .rating-number {
+        font-size: 18px !important;
+    }
+
+    .rating-number-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .rating-stars-large i,
+    .rating-number-star {
+        font-size: 12px !important;
+    }
+
+    /* reduce avatar & cover overlap on very small screens */
+    .profile-avatar-circle {
+        left: 14px;
+        width: 88px;
+        height: 88px;
+        bottom: -36px;
+    }
+}
+
+/* 6. Thanh tìm kiếm & Lọc (Giống ảnh) */
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    padding: 0 15px 15px 15px;
+}
+
+.search-input-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-gray);
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: var(--bg-white);
+}
+
+.search-input-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-left: 8px;
+    font-size: 13px;
+}
+
+.filter-btn-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--border-gray);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--bg-white);
+    min-width: 140px;
+}
+
+/* Cập nhật màu các thành phần cũ theo palette mới */
+.price-text {
+    color: var(--success-green);
+}
+
+.link-blue,
+.hashtag {
+    color: var(--link-blue);
+}
+
+.icon-zalo,
+.icon-mess {
+    color: var(--link-blue);
+}
+
+.icon-phone {
+    color: var(--success-green);
+}
+
+/* --- STYLE CHO TRANG CHỈNH SỬA HỒ SƠ (EDIT PROFILE) --- */
+
+/* Header trắng tiêu đề to */
+.edit-header {
+    background-color: var(--bg-white);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Thẻ hồ sơ có nút Upload Avatar */
+.profile-card-edit {
+    background: linear-gradient(135deg, #0137AE 0%, #001a4d 100%);
+    /* Gradient từ màu Primary */
+    background: linear-gradient(180deg, #0137AE 0%, #158EFF 50%, #000557 100%);
+    margin: 0 15px 20px 15px;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    color: var(--bg-white);
+    position: relative;
+}
+
+.avatar-edit-wrapper {
+    position: relative;
+    margin-right: 15px;
+}
+
+.avatar-img-edit {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Icon camera đè lên avatar */
+.camera-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--bg-white);
+    font-size: 20px;
+    opacity: 0.9;
+}
+
+/* Form chỉnh sửa */
+.edit-form-group {
+    margin-bottom: 15px;
+    margin-top: 20px;
+    padding: 5px 15px;
+}
+
+.edit-label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-black);
+}
+
+.counter-text {
+    font-size: 12px;
+    color: var(--text-black);
+    /* Theo ảnh là màu đen hoặc xám đậm */
+    font-weight: 600;
+}
+
+.edit-input-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--text-gray);
+    /* Màu viền 888787 */
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: var(--bg-white);
+}
+
+.edit-input-box i {
+    color: var(--primary-blue);
+    /* Icon màu xanh 0137AE */
+    width: 25px;
+    text-align: center;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.edit-input-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-black);
+}
+
+/* Nút Lưu thay đổi (Xanh đậm) */
+.btn-save-change {
+    background-color: var(--primary-blue);
+    color: var(--bg-white);
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 20px 15px 40px 15px;
+    width: calc(100% - 30px);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* --- CSS RIÊNG CHO TRANG ĐỔI MẬT KHẨU --- */
+
+/* Tiêu đề trang căn trái (Ghi đè style cũ) */
+.header-title-left {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000;
+    padding: 20px 15px 10px 15px;
+    /* Padding trái phải 15px */
+    background: white;
+}
+
+/* Input giả lập hiển thị *** màu xanh */
+/* Lưu ý: Để giống ảnh, tôi sẽ dùng type="text" và chỉnh màu. 
+   Trong thực tế bảo mật thì phải dùng type="password" */
+.input-password-blue {
+    color: #0033cc !important;
+    /* Màu xanh đậm */
+    font-weight: 900 !important;
+    font-size: 24px !important;
+    /* Chữ to */
+    letter-spacing: 2px;
+    /* Khoảng cách giữa các dấu sao */
+    padding-top: 5px;
+    /* Căn chỉnh cho icon nằm giữa dọc */
+}
+
+/* Bộ đếm nằm bên phải label */
+.label-row-with-counter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+}
+
+/* --- PHẦN 12: MÀN HÌNH BỘ SƯU TẬP (COLLECTION) --- */
+
+/* Khung tìm kiếm (Dạng bo tròn, viền mỏng) */
+.search-collection-box {
+    margin: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    /* Bo tròn nhiều */
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    background: white;
+}
+
+.search-collection-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 13px;
+}
+
+.search-collection-box input::placeholder {
+    color: #000;
+    font-weight: 500;
+}
+
+.search-collection-box i {
+    color: #333;
+    font-size: 16px;
+}
+
+/* Thẻ Bộ sưu tập (Card) */
+.collection-card {
+    background: white;
+    margin: 0 15px 15px 15px;
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    /* Bóng rất nhẹ */
+}
+
+/* Khối hình vuông xám bên trái */
+.collection-thumb {
+    width: 80px;
+    height: 60px;
+    /* Hình chữ nhật bo góc */
+    background-color: #d9d9d9;
+    /* Màu xám theo bảng màu */
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin-right: 15px;
+}
+
+/* Thông tin bên phải */
+.collection-info {
+    flex: 1;
+}
+
+.collection-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+.collection-count {
+    font-size: 12px;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Nút 3 chấm ngang */
+.btn-more-dots {
+    color: #000;
+    font-size: 18px;
+    padding: 5px;
+    cursor: pointer;
+}
+
+/* Nút Tạo bộ sưu tập (Xanh đậm, ghim dưới) */
+.btn-create-collection {
+    background-color: #0137AE;
+    color: white;
+    width: calc(100% - 30px);
+    margin: 0 15px 20px 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* --- PHẦN 13: TRANG QUY ĐỊNH & HƯỚNG DẪN (POLICY) --- */
+
+/* Container chứa nội dung văn bản */
+.policy-content-scroll {
+    padding: 15px 20px 80px 20px;
+    /* Padding bottom lớn để tránh menu che */
+    background: white;
+    font-size: 13px;
+    line-height: 1.6;
+    /* Khoảng cách dòng thoáng dễ đọc */
+    color: #000;
+    text-align: justify;
+    /* Căn đều 2 bên */
+}
+
+/* Các đầu mục lớn (1. Mục tiêu...) */
+.policy-heading {
+    font-weight: 700;
+    color: #000;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Các đầu mục nhỏ (3.1. Thông tin...) */
+.policy-sub-heading {
+    font-weight: 600;
+    color: #000;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: block;
+    margin-left: 5px;
+}
+
+/* Danh sách gạch đầu dòng */
+.policy-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.policy-list li {
+    margin-bottom: 4px;
+}
+
+/* Các ví dụ Đúng/Sai cuối trang */
+.example-wrong {
+    color: #000;
+    font-weight: 500;
+}
+
+/* Chữ đen */
+.example-wrong i {
+    color: #d32f2f;
+}
+
+/* Chỉ dấu X màu đỏ */
+.example-right {
+    color: #000;
+    font-weight: 500;
+}
+
+/* Chữ đen */
+/* --- PHẦN 14: BÁO CÁO DẪN KHÁCH --- */
+
+/* Tiêu đề mục đậm (Thông tin người dẫn khách...) */
+.report-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin: 20px 15px 10px 15px;
+}
+
+/* Label của từng ô input (1. Họ và tên) */
+.report-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Bộ đếm nằm dưới ô input (Căn phải) */
+.counter-below {
+    text-align: right;
+    font-size: 12px;
+    color: #000;
+    font-weight: 600;
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
+/* Ô nhập liệu Textarea màu xám */
+.textarea-gray {
+    width: 100%;
+    height: 130px;
+    background-color: #EBEBEB;
+    /* Màu xám nhạt như ảnh */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    resize: none;
+    outline: none;
+}
+
+/* Khung upload ảnh nhỏ gọn hơn */
+.upload-box-small {
+    width: 50%;
+    /* Chiếm 70% chiều rộng */
+    margin: 10px auto;
+    /* Căn giữa (auto trái phải) */
+    border: 1px dashed #0044cc;
+    background-color: #f7f9fc;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #0044cc;
+}
+
+.upload-note {
+    font-size: 10px;
+    color: #158EFF;
+    /* Màu xanh sáng */
+    margin-bottom: 5px;
+}
+
+/* --- PHẦN 15: QUẢN LÝ NHÂN SỰ (HR MANAGEMENT) --- */
+
+/* Nút "Thêm nhân sự" (Màu xanh sáng, góc vuông bo nhẹ) */
+.btn-add-user {
+    background-color: #158EFF;
+    /* Màu xanh sáng giống ảnh */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon thùng rác đỏ */
+.icon-trash {
+    color: #FF0000;
+    /* Màu đỏ tươi */
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+}
+
+/* Tinh chỉnh bảng nhân sự */
+.hr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    color: #000;
+}
+
+/* Tiêu đề bảng (Header) */
+.hr-table thead th {
+    background: white;
+    padding: 12px 5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+}
+
+/* Dòng dữ liệu */
+.hr-table tbody td {
+    padding: 12px 5px;
+    vertical-align: middle;
+    font-weight: 600;
+}
+
+/* Hiệu ứng sọc (Dòng lẻ màu xám đậm hơn chút theo ảnh) */
+.hr-table tbody tr:nth-child(odd) {
+    background-color: #f2f4f8;
+    /* Màu xám nền */
+}
+
+.hr-table tbody tr:nth-child(even) {
+    background-color: white;
+}
+
+/* Căn chỉnh cột */
+.col-center {
+    text-align: center;
+}
+
+.col-left {
+    text-align: left;
+}
+
+.col-right {
+    text-align: right;
+    padding-right: 15px !important;
+}
+
+/* Trạng thái "Đang chờ" */
+.status-text {
+    font-weight: 700;
+    color: #333;
+}
+
+/* --- PHẦN 16: THÊM NHÂN SỰ (ADD PERSONNEL) --- */
+
+/* Hàng chia 2 cột (Dùng cho Phòng ban - Mã NV) */
+.form-row-split {
+    display: flex;
+    gap: 15px;
+    margin: 0 15px 15px 15px;
+}
+
+.col-left-60 {
+    flex: 6;
+}
+
+/* Cột trái rộng hơn chút */
+.col-right-40 {
+    flex: 4;
+}
+
+/* Style riêng cho Dropdown (Select) */
+.custom-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #888787;
+    border-radius: 6px;
+
+    /* Ép cỡ chữ bằng với span (14px) */
+    font-size: 14px !important;
+    font-weight: 500;
+    font-family: inherit;
+    /* Dùng chung font với cả trang */
+    color: #000;
+
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: none;
+}
+
+.custom-select option {
+    font-size: 14px !important;
+    /* Đảm bảo menu xổ xuống cũng là 14px */
+    background-color: white;
+    color: black;
+    padding: 10px;
+}
+
+/* --- MỚI: Modifier cho select không viền (dùng trong edit-input-box) --- */
+.custom-select.no-border {
+    border: none !important;
+    padding: 0 5px !important;
+    outline: none !important;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    background-color: transparent !important;
+}
+
+/* --- MỚI: Responsive cho form --- */
+@media (max-width: 768px) {
+
+    /* Tránh zoom trên iOS khi bấm vào select */
+    .custom-select {
+        font-size: 16px !important;
+    }
+}
+
+/* Icon chìa khóa (Loại) */
+.icon-key {
+    color: #0137AE;
+    font-size: 14px;
+    transform: rotate(45deg);
+}
+
+/* Icon 3 dấu sao xanh giả lập (Dùng cho ô mật khẩu) */
+.icon-asterisk-blue {
+    color: #0137AE;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 1px;
+    width: 25px;
+    text-align: center;
+    margin-right: 10px;
+    font-family: monospace;
+}
+
+/* Mũi tên Dropdown tùy chỉnh */
+.arrow-down-absolute {
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+    font-size: 14px;
+    color: #000;
+}
+
+/* Wrapper để định vị icon trong input */
+.input-relative {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Fix riêng cho phần Phân loại (Đầu chủ/Đầu khách) bị tràn */
+.select-type-fix {
+    border: none !important;
+    padding: 0 !important;
+    outline: none !important;
+    background: transparent !important;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    /* Quan trọng: Cho phép co nhỏ dưới kích thước nội dung */
+    -webkit-appearance: none;
+    /* Tắt giao diện mặc định gây lỗi kích thước trên iOS */
+    font-size: 14px !important;
+    /* Cỡ chữ bằng với span tiêu đề */
+}
+
+/* --- PHẦN 17: CHI TIẾT NHÂN SỰ (HR DETAIL) --- */
+
+/* Nút "Đặt lại mật khẩu mới" (Màu xám nhạt) */
+.btn-reset-password {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #d9d9d9;
+    color: #0044cc;
+    /* Chữ xanh */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 5px;
+}
+
+/* Hàng nút chức năng dưới cùng (Xoá - Lưu) */
+.bottom-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Nút Xoá (Đỏ) */
+.btn-delete-red {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    min-width: 80px;
+}
+
+/* Nút Lưu (Xanh - Nằm bên phải) */
+.btn-save-right {
+    background-color: #0033cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+/* Badge số vụ chốt trên thẻ xanh */
+.deal-count-badge {
+    background-color: #158eff;
+    /* Xanh sáng hơn nền */
+    font-size: 11px;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+/* --- PHẦN 18: DANH SÁCH BÁO CÁO (REPORT LIST) --- */
+
+/* Thanh tìm kiếm viền xanh dương */
+.search-box-blue-border {
+    margin: 10px 15px;
+    display: flex;
+    align-items: center;
+    border: 1px solid #0044cc;
+    /* Viền xanh đậm */
+    border-radius: 6px;
+    padding: 8px 12px;
+    background: white;
+}
+
+.search-box-blue-border input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+}
+
+.search-box-blue-border input::placeholder {
+    color: #ccc;
+    /* Placeholder màu nhạt */
+}
+
+.search-box-blue-border i {
+    color: #0044cc;
+    /* Icon màu xanh */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Bảng báo cáo (Report Table) */
+.report-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    /* Chữ nhỏ cho vừa 4 cột */
+    color: #000;
+}
+
+/* Header của bảng */
+.report-list-table thead th {
+    background: white;
+    padding: 10px 25px;
+    font-weight: 700;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    /* Không xuống dòng tiêu đề */
+}
+
+/* Dữ liệu trong bảng */
+.report-list-table tbody td {
+    padding: 12px 5px;
+    font-weight: 700;
+    /* Chữ đậm như ảnh */
+    vertical-align: middle;
+}
+
+/* Màu nền xen kẽ (Zebra Striping) */
+/* Dòng lẻ màu xám, dòng chẵn màu trắng */
+.report-list-table tbody tr:nth-child(odd) {
+    background-color: #f2f4f8;
+}
+
+.report-list-table tbody tr:nth-child(even) {
+    background-color: white;
+}
+
+/* Căn chỉnh cột cuối cùng */
+.text-right {
+    text-align: center;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- PHẦN 19: QUẢN LÝ KHÁCH TỰ KHỚP (AUTO MATCH) --- */
+
+/* Các nhãn tiêu đề form nhỏ (Loại tin BĐS...) */
+.search-label-small {
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Ô nhập liệu/Select viền xanh dương */
+.input-blue-border {
+    width: 100%;
+    border: 1px solid #0044cc;
+    /* Viền xanh đậm như ảnh */
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: white;
+    outline: none;
+    color: #333;
+}
+
+/* Select có mũi tên */
+.select-blue-border {
+    width: 100%;
+    border: 1px solid #0044cc;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    background: white;
+    appearance: none;
+    /* Tắt mũi tên mặc định */
+    color: #333;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px top 50%;
+    background-size: 10px auto;
+}
+
+/* --- PHÂN TRANG (PAGINATION) --- */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 15px 0 5px 0;
+}
+
+.page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    font-weight: 600;
+    background: white;
+}
+
+.page-link.active {
+    background-color: #0044cc;
+    color: white;
+    border-color: #0044cc;
+}
+
+/* Hàng diện tích (Input + Đơn vị) */
+.area-input-group {
+    display: flex;
+    border: 1px solid #0044cc;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.area-input-group input {
+    flex: 1;
+    border: none;
+    padding: 8px 10px;
+    font-size: 13px;
+    outline: none;
+}
+
+.area-unit {
+    width: 60px;
+    border-left: 1px solid #0044cc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    background: white;
+}
+
+/* Tiêu đề phân cách danh sách kết quả */
+.result-header {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 15px 0 10px 0;
+}
+
+/* --- PHẦN 20: TẠO BỘ SƯU TẬP (CREATE COLLECTION) --- */
+
+/* Input textarea (Khung nhập mô tả) */
+/* Kế thừa style của edit-input-box nhưng chỉnh lại để nhập nhiều dòng */
+.textarea-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    /* Đảm bảo font chữ đồng bộ */
+    resize: none;
+    /* Không cho người dùng kéo giãn khung */
+    height: 80px;
+    /* Chiều cao cố định */
+    padding: 5px 0;
+    color: #333;
+    background: transparent;
+}
+
+/* Placeholder màu xám nhạt */
+.input-placeholder-gray::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+/* --- CÁC CLASS TÁI SỬ DỤNG (Đảm bảo bạn đã có các class này từ các phần trước) --- */
+/* Nếu chưa có, hãy thêm vào luôn: */
+
+/* 1. Form Group */
+.edit-form-group {
+    margin-bottom: 20px;
+    /* Khoảng cách giữa các ô nhập */
+    padding: 5px 15px;
+}
+
+/* 2. Dòng nhãn tiêu đề (Label + Bộ đếm) */
+.edit-label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    /* Chữ đậm */
+    color: #000;
+}
+
+/* 3. Hộp nhập liệu (Input Box) */
+.edit-input-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    /* Viền xám */
+    border-radius: 6px;
+    padding: 10px 12px;
+    background: white;
+    gap: 10px;
+    /* Khoảng cách giữa icon và input */
+}
+
+/* 4. Input thường bên trong hộp */
+.edit-input-box input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 5. Bộ đếm ký tự nhỏ (0/50) */
+.counter-text {
+    font-size: 12px;
+    color: #666;
+    font-weight: 400;
+}
+
+/* 6. Nút Lưu/Tạo mới (Màu xanh) */
+.btn-save-change {
+    display: block;
+    width: calc(100% - 30px);
+    /* Trừ lề 2 bên */
+    margin: 30px 15px;
+    padding: 12px;
+    background-color: #0137AE;
+    /* Xanh đậm chuẩn */
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* --- PHẦN 21: CHI TIẾT BÁO CÁO (REPORT DETAIL VIEW) --- */
+
+/* Tiêu đề mục đậm (Dùng lại class report-section-title nếu có, hoặc tạo mới) */
+.view-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin: 20px 0 10px 0;
+}
+
+/* Dòng thông tin chi tiết (Label đậm: Nội dung thường) */
+.view-info-row {
+    font-size: 13px;
+    color: #000;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.view-info-label {
+    font-weight: 700;
+    /* Chữ đậm */
+}
+
+/* Lưới hình ảnh (3 ảnh ngang) */
+.view-image-grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.view-image-item {
+    width: calc(33.33% - 7px);
+    /* Chia đều 3 cột */
+    padding-bottom: calc(33.33% - 7px);
+    /* Tạo hình vuông */
+    background-color: #d9d9d9;
+    /* Màu xám như ảnh */
+    border-radius: 4px;
+    position: relative;
+    /* Để chứa ảnh thật nếu cần */
+    overflow: hidden;
+}
+
+/* Nếu có ảnh thật thì dùng class này cho thẻ img bên trong */
+.view-image-item img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- PHẦN 22: CHI TIẾT TIN TỨC (NEWS DETAIL) --- */
+
+/* Header màu xanh dương (Khác với header trắng ở các trang trước) */
+.header-blue {
+    background-color: #0137AE;
+    /* Màu chủ đạo */
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-blue a {
+    color: white;
+    font-size: 18px;
+    margin-right: 15px;
+}
+
+.header-blue .title-center {
+    flex: 1;
+    text-align: center;
+    margin-right: 25px;
+    /* Để cân bằng với icon back bên trái */
+}
+
+/* Khung chứa nội dung bài viết */
+.article-container {
+    background: white;
+    margin: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    /* Bo góc nhẹ */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Tiêu đề bài viết */
+.article-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+/* Nội dung văn bản */
+.article-content {
+    font-size: 13px;
+    color: #333;
+    line-height: 1.6;
+    text-align: justify;
+    /* Căn đều 2 bên như báo */
+    margin-bottom: 15px;
+}
+
+/* Hình ảnh trong bài */
+.article-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: block;
+}
+
+/* --- PHẦN 23: ĐĂNG THÔNG BÁO VỤ CHỐT (POST DEAL) --- */
+
+/* Nhãn tiêu đề nhỏ đậm */
+.label-bold-small {
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Khung nhập nội dung lớn (Textarea) */
+.textarea-large {
+    width: 100%;
+    height: 120px;
+    /* Chiều cao cố định */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    /* Bo góc nhỏ */
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: none;
+    /* Không cho kéo */
+    margin-bottom: 5px;
+    outline: none;
+}
+
+.textarea-large::placeholder {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Bộ đếm ký tự nằm bên phải dưới textarea */
+.char-counter-right {
+    text-align: right;
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+/* Input thường (Mã nhân viên) - Có thể dùng lại class cũ hoặc tạo mới đơn giản */
+.input-simple-border {
+    width: 100%;
+    /* Rộng 100% (hoặc chỉnh lại theo ảnh là 50-60%) */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 13px;
+    outline: none;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+/* Khung Upload ảnh (Nét đứt xanh) */
+.upload-box-dashed {
+    width: 200px;
+    /* Chiều rộng cố định hoặc % */
+    height: 150px;
+    margin: 20px auto;
+    /* Căn giữa */
+    border: 1px dashed #0044cc;
+    /* Viền nét đứt xanh */
+    background-color: #f9faff;
+    /* Nền xanh rất nhạt */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Icon Camera ở giữa */
+.upload-icon-camera {
+    font-size: 40px;
+    color: #0044cc;
+}
+
+.upload-icon-plus {
+    position: absolute;
+    top: 40px;
+    right: 65px;
+    /* Căn chỉnh vị trí dấu cộng */
+    font-size: 18px;
+    color: #0044cc;
+    font-weight: bold;
+}
+
+.upload-text {
+    font-size: 11px;
+    color: #0044cc;
+    margin-top: 5px;
+}
+
+/* Nút Đăng (Full width, màu xanh) */
+.btn-submit-blue {
+    background-color: #0033cc;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    /* Bo tròn hơn nút thường */
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+/* --- PHẦN 24: QUẢN LÝ NHÂN SỰ (HR MANAGEMENT LIST) --- */
+
+/* Khu vực Tab chuyển đổi (Đầu chủ / Đầu khách) */
+.hr-tab-container {
+    display: flex;
+    padding: 15px;
+    gap: 10px;
+    /* Khoảng cách giữa 2 tab */
+    background: white;
+}
+
+.hr-tab-btn {
+    flex: 1;
+    /* Chia đều độ rộng */
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    background-color: #f5f5f5;
+    /* Màu nền mặc định (xám nhạt) */
+    color: #333;
+}
+
+.hr-tab-btn.active {
+    background-color: #0137AE;
+    /* Màu active xanh dương */
+    color: white;
+}
+
+/* Thanh công cụ (Lọc, Tìm kiếm, Thêm mới) */
+.hr-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px 15px 15px;
+    background: white;
+}
+
+.btn-tool-outline {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    /* Bo tròn nhiều như viên thuốc */
+    background: white;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+}
+
+.btn-add-blue {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background-color: #1E90FF;
+    /* Xanh da trời sáng hơn */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Bảng danh sách nhân sự */
+.hr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    background: white;
+}
+
+.hr-table thead th {
+    text-align: left;
+    padding: 12px 5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: #000;
+    border-bottom: 1px solid #eee;
+}
+
+.hr-table tbody td {
+    padding: 12px 5px;
+    vertical-align: middle;
+    color: #000;
+    font-weight: 600;
+}
+
+.hr-table tbody td a {
+    text-decoration: none;
+}
+
+/* Màu xen kẽ các dòng (Zebra) */
+.hr-table tbody tr:nth-child(odd) {
+    background-color: #f2f4f8;
+    /* Xám nhạt */
+}
+
+.hr-table tbody tr:nth-child(even) {
+    background-color: white;
+}
+
+/* Các trạng thái & Style riêng trong bảng */
+.icon-trash-red {
+    color: #ff0000;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.text-id-blue {
+    color: #0044cc;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.hr-table .status-active {
+    color: #154B02;
+}
+
+.hr-table .status-pause {
+    color: #FC3838;
+}
+
+/* Phân trang (Pagination) */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 20px 0;
+    background: white;
+}
+
+.page-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #333;
+}
+
+.page-btn.active {
+    background-color: #0137AE;
+    color: white;
+    border-color: #0137AE;
+}
+
+.page-btn.nav-arrow {
+    background-color: #0137AE;
+    /* Nút mũi tên nền xanh */
+    color: white;
+    border: none;
+}
+
+/* Tinh chỉnh cho phân trang của trang HR Management */
+.table-wrapper+.pagination-container {
+    padding-top: 10px;
+    /* Giảm khoảng trống phía trên */
+    padding-bottom: 80px;
+    /* Giữ khoảng cách an toàn với menu dưới */
+}
+
+/* --- PHẦN 26: THÊM THÔNG TIN NỘI BỘ (ADD INTERNAL NEWS) --- */
+
+/* Header màu xanh dương đậm */
+.header-blue-solid {
+    background-color: #0033cc;
+    /* Màu xanh đậm hơn */
+    color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Căn giữa tiêu đề */
+    position: relative;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.header-blue-solid .back-btn-white {
+    position: absolute;
+    left: 15px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Label tiêu đề */
+.label-bold-black {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 8px;
+    margin-top: 20px;
+    display: block;
+}
+
+/* Input tiêu đề (Nền trắng, không viền hoặc viền rất nhạt) */
+.input-title-box {
+    width: 100%;
+    background: white;
+    padding: 15px;
+    border: none;
+    /* Trong ảnh không thấy viền rõ */
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Đổ bóng nhẹ thay viền */
+}
+
+.input-counter-right {
+    text-align: right;
+    font-size: 11px;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* Tùy chỉnh chiều cao cho CKEditor khớp với thiết kế */
+.ck-editor__editable {
+    min-height: 180px !important;
+    /* Cao hơn chút để nhập văn bản */
+    background-color: white !important;
+}
+
+/* Khung Upload ảnh to ở giữa (Style giống ảnh) */
+.upload-box-large-center {
+    width: 200px;
+    height: 180px;
+    margin: 40px auto;
+    /* Cách trên dưới 40px, căn giữa */
+    border: 1px dashed #0044cc;
+    background-color: #f2f6ff;
+    /* Nền xanh rất nhạt */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+}
+
+.icon-camera-large {
+    font-size: 50px;
+    color: #0033cc;
+    margin-bottom: 10px;
+}
+
+.icon-plus-absolute {
+    position: absolute;
+    top: 55px;
+    /* Căn chỉnh dấu cộng nằm trên góc camera */
+    right: 60px;
+    font-size: 20px;
+    color: #0033cc;
+    font-weight: bold;
+}
+
+.upload-hint-text {
+    font-size: 10px;
+    color: #4a8eff;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* --- PHẦN 27: CHỈNH SỬA THÔNG TIN NỘI BỘ (EDIT INTERNAL NEWS) --- */
+
+/* Container chứa ảnh preview bên trong khung upload */
+.upload-preview-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ảnh xem trước */
+.upload-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cắt ảnh cho vừa khung */
+}
+
+/* Nút Xóa ảnh (Dấu X) */
+.btn-remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+}
+
+/* Ghi đè style input tiêu đề để chữ đậm và to hơn chút giống ảnh */
+.input-title-large {
+    font-weight: 700;
+    font-size: 15px;
+    color: #000;
+}
+
+/* --- PHẦN 25: ĐIỀU KHOẢN DỊCH VỤ (TERMS OF SERVICE) --- */
+
+/* Container chứa nội dung */
+.terms-container {
+    padding: 20px 15px 80px 15px;
+    /* Padding dưới để không bị menu che */
+    background: white;
+    color: #000;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: justify;
+    /* Căn đều 2 bên cho đẹp */
+}
+
+/* Tiêu đề chính (ĐIỀU KHOẢN DỊCH VỤ) */
+.terms-main-title {
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: underline;
+    /* Gạch chân mặc định (đen) */
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+/* Tiêu đề mục con (1. ABC, 2. XYZ) */
+.terms-section-title {
+    font-weight: 700;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-decoration: underline;
+    /* Gạch chân đen */
+    display: inline-block;
+}
+
+/* Kiểu chữ có gạch chân màu xanh dương */
+.text-underline-blue {
+    text-decoration-thickness: 1px;
+    /* Độ dày nét gạch */
+    text-underline-offset: 3px;
+    /* Khoảng cách từ chữ xuống gạch */
+}
+
+/* Danh sách (ul/li) */
+.terms-list {
+    list-style-type: disc;
+    /* Dấu chấm tròn */
+    padding-left: 20px;
+    margin-top: 5px;
+}
+
+.terms-list li {
+    margin-bottom: 5px;
+}
+
+/* --- PHẦN 28: CHÍNH SÁCH BẢO MẬT (PRIVACY POLICY) --- */
+
+/* Container văn bản chính sách (Dùng chung cho các trang text dài) */
+.policy-container {
+    padding: 20px 15px 80px 15px;
+    /* Padding bottom để tránh menu */
+    background: white;
+    color: #333;
+    font-size: 13px;
+    /* Cỡ chữ dễ đọc trên mobile */
+    line-height: 1.6;
+    /* Giãn dòng thoáng */
+    text-align: justify;
+    /* Căn đều 2 bên */
+}
+
+/* Tiêu đề mục (1. Tên mục, 2. Tên mục...) */
+.policy-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+/* Đoạn văn bản thường */
+.policy-text {
+    margin-bottom: 10px;
+}
+
+/* Danh sách gạch đầu dòng hoặc chấm tròn */
+.policy-list {
+    list-style-type: disc;
+    /* Chấm tròn */
+    padding-left: 20px;
+    /* Thụt đầu dòng */
+    margin-bottom: 10px;
+}
+
+.policy-list li {
+    margin-bottom: 5px;
+}
+
+/* --- PHẦN 15: đánh giá --- */
+/* --- Phần đánh giá trên ảnh bìa (Profile Rating) --- */
+.cover-rating-box {
+    position: absolute;
+    bottom: 15px;
+    /* Cách đáy 15px */
+    right: 15px;
+    /* Cách phải 15px */
+    background: #ffffff;
+    /* Nền trắng đục để dễ nhìn */
+    padding: 8px 12px;
+    /* Khoảng cách đệm bên trong */
+    border-radius: 12px;
+    /* Bo góc mềm mại */
+    display: flex;
+    flex-direction: column;
+    /* Sắp xếp theo cột (điểm số trên, số lượng dưới) */
+    align-items: flex-end;
+    /* Căn lề phải cho gọn */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    /* Đổ bóng nhẹ tạo chiều sâu */
+    z-index: 5;
+    /* Đảm bảo nằm trên các phần tử khác */
+}
+
+/* Dòng chứa điểm số và ngôi sao */
+.rating-score-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Khoảng cách giữa điểm số và các ngôi sao */
+    margin-bottom: 2px;
+    /* Khoảng cách với dòng "số đánh giá" bên dưới */
+}
+
+/* Số điểm (VD: 5.0) */
+.rating-number {
+    font-weight: 800;
+    font-size: 16px;
+    color: #222;
+    /* Màu chữ đậm */
+}
+
+/* Nhóm các ngôi sao */
+.rating-stars-group {
+    display: flex;
+    gap: 2px;
+    /* Khoảng cách giữa các ngôi sao */
+    color: #FFC107;
+    /* Màu vàng thương hiệu cho sao */
+    font-size: 12px;
+    /* Kích thước sao */
+}
+
+/* Dòng chữ số lượng đánh giá (VD: 100 đánh giá) */
+.rating-count-caption {
+    font-size: 11px;
+    color: #777;
+    /* Màu chữ nhạt hơn */
+    font-weight: 500;
+}
+
+/* --- PHẦN 29: PROFILE VERSION 2 (NEW DESIGN) --- */
+
+/* Header có tiêu đề gạch chân xanh */
+.header-title-underline {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    text-transform: capitalize;
+    border-bottom: 2px solid #007bff;
+    /* Gạch chân xanh */
+    padding-bottom: 2px;
+    display: inline-block;
+}
+
+/* Layout chia 2 cột cho phần thông tin trên cùng */
+.profile-v2-top {
+    display: flex;
+    padding: 15px;
+    gap: 10px;
+    background: white;
+}
+
+.profile-v2-left {
+    flex: 6;
+    /* Cột trái rộng hơn chút */
+}
+
+.profile-v2-right {
+    flex: 4;
+    /* Cột phải chứa nút sửa, đánh giá, ảnh CCCD */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Căn lề phải */
+}
+
+/* Avatar tròn lớn */
+.avatar-v2-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+}
+
+/* Thông tin tên, chức vụ */
+.profile-name-v2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.profile-role-v2 {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.profile-sub-v2 {
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.fb-link-v2 {
+    color: #007bff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+/* Danh sách icon thông tin bên trái */
+.info-list-v2 .info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.info-list-v2 i {
+    width: 16px;
+    /* Cố định độ rộng icon để thẳng hàng */
+    text-align: center;
+}
+
+/* Nút Chỉnh sửa hồ sơ (Viền xanh, bo tròn) */
+.btn-edit-profile-pill {
+    border: 1px solid #007bff;
+    color: #007bff;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+    white-space: nowrap;
+}
+
+/* Phần đánh giá (Rating) */
+.rating-box-v2 {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.rating-score-big {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.rating-count-small {
+    font-size: 11px;
+    color: #999;
+}
+
+.stars-gold {
+    color: #ffc107;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+/* Ảnh CCCD bên phải */
+.id-card-preview {
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    margin-bottom: 3px;
+}
+
+.id-card-preview img {
+    width: 100%;
+    display: block;
+}
+
+.id-text-right {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    width: 100%;
+    text-align: right;
+}
+
+/* --- PHẦN 29: PROFILE VERSION 2 (NEW DESIGN) --- */
+
+/* Header có tiêu đề gạch chân xanh */
+.header-title-underline {
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+    text-transform: capitalize;
+    border-bottom: 2px solid #007bff;
+    /* Gạch chân xanh */
+    padding-bottom: 2px;
+    display: inline-block;
+}
+
+/* Layout chia 2 cột cho phần thông tin trên cùng */
+.profile-v2-top {
+    display: flex;
+    padding: 15px;
+    gap: 15px;
+    background: white;
+}
+
+.profile-v2-left {
+    flex: 1.2;
+    /* Cột trái rộng hơn chút */
+}
+
+.profile-v2-right {
+    flex: 0.8;
+    /* Cột phải chứa nút sửa, đánh giá, ảnh CCCD */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Căn lề phải */
+}
+
+/* Avatar tròn lớn */
+.avatar-v2-large {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+}
+
+/* Thông tin tên, chức vụ */
+.profile-name-v2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.profile-role-v2 {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.profile-sub-v2 {
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.fb-link-v2 {
+    color: #007bff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+/* Danh sách icon thông tin bên trái */
+.info-list-v2 .info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.info-list-v2 i {
+    width: 16px;
+    /* Cố định độ rộng icon để thẳng hàng */
+    text-align: center;
+}
+
+/* Nút Chỉnh sửa hồ sơ (Viền xanh, bo tròn) */
+.btn-edit-profile-pill {
+    border: 1px solid #007bff;
+    color: #007bff;
+    background: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+    white-space: nowrap;
+}
+
+/* Phần đánh giá (Rating) */
+.rating-box-v2 {
+    text-align: right;
+    margin-bottom: 15px;
+}
+
+.rating-score-big {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.rating-count-small {
+    font-size: 11px;
+    color: #999;
+}
+
+.stars-gold {
+    color: #ffc107;
+    font-size: 14px;
+    margin-top: 3px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+/* Ảnh CCCD bên phải */
+.id-card-preview {
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    margin-bottom: 3px;
+}
+
+.id-card-preview img {
+    width: 100%;
+    display: block;
+}
+
+.id-text-right {
+    font-size: 11px;
+    font-weight: 600;
+    color: #333;
+    width: 100%;
+    text-align: right;
+}
+
+/* --- PHẦN 30: DANH SÁCH THÔNG TIN NỘI BỘ (INTERNAL INFO LIST) --- */
+
+/* Tiêu đề bảng nhỏ gọn */
+.table-manage-info thead th {
+    background: #f0f4f8;
+    /* Nền header bảng hơi xám xanh */
+    font-size: 11px;
+    padding: 10px 5px;
+    border-bottom: 1px solid #eee;
+    color: #000;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.table-manage-info tbody td {
+    padding: 10px 5px;
+    font-size: 12px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+/* Cột Tiêu đề giới hạn dòng */
+.title-cell {
+    max-width: 150px;
+    /* Giới hạn chiều rộng */
+    white-space: nowrap;
+    /* Không xuống dòng */
+    overflow: hidden;
+    /* Ẩn phần thừa */
+    text-overflow: ellipsis;
+    /* Hiện dấu ... */
+    font-weight: 600;
+}
+
+/* Icon xử lý (Sửa - Đen) */
+.icon-edit-black {
+    color: #000;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* ==========================
+   RATING COMPONENT (STANDARD)
+   Dùng chung cho toàn bộ detail profile
+   ========================== */
+
+/* Base component */
+.cover-rating-container {
+    background: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: Roboto, sans-serif;
+}
+
+/* Variant: rating hiển thị trong info-grid */
+.rating--info {
+    width: 220px;
+    text-align: right;
+    position: static;
+    margin: 0;
+}
+
+/* Label */
+.rating--info .rating-label {
+    font-size: 13px;
+    color: #8a8a8a;
+    margin-bottom: 4px;
+}
+
+/* Number + star */
+.rating--info .rating-number-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.rating--info .rating-number {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+}
+
+.rating--info .rating-number-star {
+    font-size: 20px;
+    color: #FFC107;
+}
+
+/* Stars row */
+.rating--info .rating-stars-large {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.rating--info .rating-stars-large i {
+    font-size: 22px;
+    color: #FFC107;
+    margin: 0;
+}
+
+/* Rating count */
+.rating--info .rating-count-caption-small {
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* ==========================
+   INFO GRID (CHA CHỨA RATING)
+   ========================== */
+
+.info-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* ==========================
+   MOBILE
+   ========================== */
+@media (max-width: 600px) {
+    .rating--info {
+        width: auto;
+        text-align: left;
+    }
+
+    .rating--info .rating-number-row,
+    .rating--info .rating-stars-large {
+        justify-content: flex-start;
+    }
+}

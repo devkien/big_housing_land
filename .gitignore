@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Vendor
+/vendor/
+
+# Logs & cache
+/storage/
+/tests/
+
+# Env & config nhạy cảm
+.env
+config/database.php
+
+# Uploads (KHÔNG push ảnh người dùng)
+public/uploads/*
+!public/uploads/.gitkeep
