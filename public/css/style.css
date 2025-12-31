@@ -872,7 +872,7 @@ body {
 
 /* Header đơn giản (chỉ có tiêu đề ở giữa) */
 .simple-blue-header {
-    background-color: #0033cc;
+    background-color: var(--primary-blue);
     color: white;
     text-align: center;
     padding: 18px 15px;
