@@ -32,15 +32,18 @@ class Property extends Model
                 xa_phuong,
                 dia_chi_chi_tiet,
                 trang_thai,
+                tinh_trang_duyet,
                 mo_ta,
                 is_visible
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         );
 
         // Ensure ma_hien_thi exists (DB requires non-null)
         // Use a stronger random id (time + 8 random bytes => 16 hex chars) to reduce collision risk.
         $ma_hien_thi = $data['ma_hien_thi'] ?? null;
-
+        $duyetStatus = isset($data['tinh_trang_duyet']) && $data['tinh_trang_duyet'] === 'da_duyet' 
+                       ? 'da_duyet' 
+                       : 'cho_duyet';
         // Prepare params - placeholder for ma_hien_thi will be filled below
         $params = [
             $data['user_id'] ?? null,
@@ -66,6 +69,7 @@ class Property extends Model
             $data['xa_phuong'] ?? null,
             $data['dia_chi_chi_tiet'] ?? null,
             $data['trang_thai'] ?? null,
+            $data['tinh_trang_duyet'] ?? 'cho_duyet',
             $data['mo_ta'] ?? null,
             isset($data['is_visible']) ? (int)$data['is_visible'] : 1
         ];
@@ -258,6 +262,58 @@ class Property extends Model
         $stmt->execute($params);
         return (int)$stmt->fetchColumn();
     }
+
+    // Get properties for a specific user, optionally filtering by approval status
+    public static function getForUser(int $userId, int $limit = 20, int $offset = 0, ?string $search = null, ?string $tinh_trang_duyet = null)
+    {
+        $db = self::db();
+        $params = [$userId];
+        $sql = "SELECT * FROM properties WHERE user_id = ?";
+
+        if ($tinh_trang_duyet) {
+            $sql .= " AND tinh_trang_duyet = ?";
+            $params[] = $tinh_trang_duyet;
+        }
+
+        if ($search) {
+            $like = '%' . $search . '%';
+            $sql .= " AND (tieu_de LIKE ? OR ma_hien_thi LIKE ? OR dia_chi_chi_tiet LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $sql .= " ORDER BY id DESC LIMIT " . (int)$limit . " OFFSET " . (int)$offset;
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function countForUser(int $userId, ?string $search = null, ?string $tinh_trang_duyet = null)
+    {
+        $db = self::db();
+        $params = [$userId];
+        $sql = "SELECT COUNT(*) FROM properties WHERE user_id = ?";
+
+        if ($tinh_trang_duyet) {
+            $sql .= " AND tinh_trang_duyet = ?";
+            $params[] = $tinh_trang_duyet;
+        }
+
+        if ($search) {
+            $like = '%' . $search . '%';
+            $sql .= " AND (tieu_de LIKE ? OR ma_hien_thi LIKE ? OR dia_chi_chi_tiet LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
+
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+
     // Find a single property by its visible code `ma_hien_thi`
     public static function findByMaHienThi(string $ma)
     {
@@ -309,6 +365,29 @@ class Property extends Model
         $stmt = $db->prepare("UPDATE properties SET trang_thai = ?, updated_at = NOW() WHERE id = ?");
         try {
             return (bool)$stmt->execute([$trang_thai, $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+    public static function quickUpdate($id, $trangThai, $tinhTrangDuyet)
+    {
+        // Validate trang_thai
+        $allowedStatus = [
+            'ban_manh', 'tam_dung_ban', 'dung_ban', 'da_ban', 'tang_chao', 'ha_chao'
+        ];
+        if (!in_array($trangThai, $allowedStatus)) return false;
+
+        // Validate tinh_trang_duyet
+        $allowedApproval = [
+            'cho_duyet', 'da_duyet', 'tu_choi'
+        ];
+        if (!in_array($tinhTrangDuyet, $allowedApproval)) return false;
+
+        $db = self::db();
+        $sql = "UPDATE properties SET trang_thai = ?, tinh_trang_duyet = ?, updated_at = NOW() WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        try {
+            return $stmt->execute([$trangThai, $tinhTrangDuyet, $id]);
         } catch (PDOException $e) {
             return false;
         }

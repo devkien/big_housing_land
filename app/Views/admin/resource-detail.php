@@ -21,7 +21,7 @@
         <div class="feed-list" style="padding-bottom: 80px;">
 
             <?php if (!empty($property)):
-                // --- DATA PREPARATION (similar to admin/detail.php) ---
+                // --- DATA PREPARATION ---
                 $price = 'Thỏa thuận';
                 if (!empty($property['gia_chao'])) {
                     $val = (float)$property['gia_chao'];
@@ -120,12 +120,35 @@
                         <?php endif; ?>
                     </div>
 
-                    <?php if (!empty($property['dia_chi_chi_tiet'])): ?>
+                    <?php
+                        $addrParts = [];
+                        // 1. Địa chỉ chi tiết (số nhà, đường...)
+                        if (!empty($property['dia_chi_chi_tiet'])) {
+                            $addrParts[] = $property['dia_chi_chi_tiet'];
+                        }
+                        // 2. Xã / Phường
+                        if (!empty($property['xa_phuong'])) {
+                            $addrParts[] = $property['xa_phuong'];
+                        }
+                        // 3. Quận / Huyện (Nếu bạn có lưu Slug/ID thì cần map tên, ở đây giả sử lưu tên hoặc hiển thị trực tiếp)
+                        if (!empty($property['quan_huyen'])) {
+                            $addrParts[] = $property['quan_huyen'];
+                        }
+                        // 4. Tỉnh / Thành
+                        if (!empty($property['tinh_thanh'])) {
+                            $addrParts[] = $property['tinh_thanh'];
+                        }
+                        
+                        // Nối chuỗi bằng dấu phẩy
+                        $fullAddress = implode(', ', $addrParts);
+                    ?>
+                    
+                    <?php if (!empty($fullAddress)): ?>
                         <div style="margin-top: 10px; font-size: 14px; color: #333; padding: 0 5px;">
-                            <i class="fa-solid fa-location-dot" style="color: #666; width: 20px;"></i> <strong>Địa chỉ chi tiết:</strong> <?= htmlspecialchars($property['dia_chi_chi_tiet']) ?>
+                            <i class="fa-solid fa-location-dot" style="color: #666; width: 20px;"></i> 
+                            <strong>Địa chỉ:</strong> <?= htmlspecialchars($fullAddress) ?>
                         </div>
                     <?php endif; ?>
-
                     <div class="post-content">
                         <strong><?= htmlspecialchars($property['tieu_de'] ?? '') ?></strong>
                         <div class="" style="margin-top: 10px;">

@@ -8,23 +8,23 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/style.css">
     <script src="<?= BASE_URL ?>/public/js/script.js"></script>
+
     <?php require_once __DIR__ . '/../../Helpers/functions.php'; ?>
     <meta name="csrf-token" content="<?= csrf_token() ?>">
+
     <script>
+        // Định nghĩa đường dẫn gốc cho JS
         window.BASE_URL = '<?= BASE_URL ?>';
         window.BASE_PATH = window.BASE_URL;
-    </script>
-    <script>
-        // Mock CKEditor để tránh lỗi trong script.js vì trang này không cần bộ soạn thảo
+        
+        // Giả lập CKEditor để tránh lỗi JS
         window.ClassicEditor = {
             create: function() {
-                // Trả về Promise không bao giờ resolve để script.js không làm gì tiếp theo
                 return new Promise(() => {});
             }
         };
-    </script>
-    <script>
-        window.BASE_PATH = '<?= BASE_PATH ?>';
+        
+        // Đặt loại tài nguyên hiện tại
         window.CURRENT_RESOURCE_TYPE = 'kho_cho_thue';
     </script>
     <script src="<?= BASE_URL ?>/js/script.js"></script>
@@ -34,13 +34,13 @@
     <div class="app-container" style="background: white;">
 
         <header class="resource-header">
-            <a href="<?= BASE_URL ?>/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <a href="<?= BASE_URL ?>/admin/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
             <div class="resource-title">Kho tài nguyên</div>
             <div class="header-icon-btn"></div>
         </header>
 
         <div class="tabs-container">
-            <button class="tab-btn active">Kho nhà cho thuê</button>
+                 <button class="tab-btn active">Kho nhà cho thuê</button>
         </div>
 
         <div class="toolbar-section">
@@ -53,10 +53,11 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
                         <th style="width: 100px;">THỜI GIAN</th>
-                        <th style="width: 100px;">PHÒNG BAN</th>
+
                         <th style="width: 240px;">TIÊU ĐỀ</th>
+
                         <th style="width: 100px;">LOẠI BĐS</th>
                         <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 80px;">CÓ SỔ</th>
@@ -67,8 +68,14 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
+
                         <th style="width:120px;">HIỆN TRẠNG</th>
+
                         <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
+                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
+                        <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -88,10 +95,18 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
+                            // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
+                            $currentUser = \Auth::user();
+                            $currentUserId = $currentUser['id'] ?? 0;
+                            $postUserId = $p['user_id'] ?? 0;
+                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+
+                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
+                                continue;
+                            }
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
-                            $statusKey = $p['trang_thai'] ?? '';
-                            $status = $statusMap[$statusKey] ?? ($statusKey ?: '');
+                            $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
                             $address = trim($p['dia_chi_chi_tiet'] ?? '');
                             if ($address === '') {
                                 $parts = array_filter([$p['tinh_thanh'] ?? '', $p['quan_huyen'] ?? '', $p['xa_phuong'] ?? '']);
@@ -121,13 +136,17 @@
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
                                 <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
+                                
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
-                                <td style="cursor:pointer; color:#0b66ff;" onclick="window.location.href='<?= BASE_URL ?>/detail?id=<?= htmlspecialchars($p['id']) ?>'"><?= $code ?></td>
+
                                 <td><?= $created ?></td>
-                                <td><?= $phong_ban ?></td>
-                                <td><?= $tieu_de ?></td>
+
+                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                                    <?= $tieu_de ?>
+                                </td>
+
                                 <td><?= htmlspecialchars($loai_bds) ?></td>
                                 <td><?= htmlspecialchars($loai_kho) ?></td>
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
@@ -138,9 +157,15 @@
                                 <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
                                 <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
                                 <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+
                                 <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
+                                <td><?= $code ?></td>
+
+                                <td><?= $phong_ban ?></td>
                             </tr>
                     <?php
                         endforeach;
@@ -149,6 +174,7 @@
                 </tbody>
             </table>
         </div>
+        
         <div class="pagination-container">
             <?php
             // Build query string to persist filters
@@ -159,16 +185,16 @@
             ?>
 
             <?php if ($page > 1): ?>
-                <a href="<?= BASE_URL ?>/management-resource-rent?page=<?= $page - 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
+                <a href="<?= BASE_URL ?>/admin/management-resource-rent?page=<?= $page - 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
             <?php endif; ?>
 
             <a href="#" class="page-link active"><?= $page ?> / <?= $pages > 0 ? $pages : 1 ?></a>
 
             <?php if ($page < $pages): ?>
-                <a href="<?= BASE_URL ?>/management-resource-rent?page=<?= $page + 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="<?= BASE_URL ?>/admin/management-resource-rent?page=<?= $page + 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
             <?php endif; ?>
         </div>
-        <!-- Modal Lọc -->
+
         <div id="filter-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Bộ lọc tìm kiếm</h3>
@@ -196,7 +222,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Lưu vào bộ sưu tập -->
+
         <div id="save-collection-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Lưu vào bộ sưu tập</h3>
@@ -220,7 +246,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Cập nhật trạng thái (Khi ấn icon ghi chú) -->
+
         <div id="status-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Cập nhật trạng thái</h3>
@@ -243,6 +269,7 @@
                 </div>
             </div>
         </div>
+
         <div id="bottom-nav-container">
             <?php require_once __DIR__ . '/layouts/bottom-nav.php'; ?>
         </div>
@@ -284,7 +311,7 @@
 
                         // Gọi API lấy dữ liệu đã lưu
                         // Đường dẫn: /admin/get-property-collections
-                        fetch(window.BASE_URL + '/get-property-collections?id=' + window.currentPropertyId)
+                        fetch(window.BASE_URL + '/admin/get-property-collections?id=' + window.currentPropertyId)
                             .then(function(r) {
                                 return r.json();
                             })
@@ -303,7 +330,7 @@
                 });
             });
 
-            // --- 2. SỰ KIỆN NÚT LƯU (QUAN TRỌNG: ĐÃ SỬA LỖI) ---
+            // --- 2. SỰ KIỆN NÚT LƯU ---
             var confirmSaveBtn = qs('#confirm-save-collection');
             if (confirmSaveBtn) {
                 confirmSaveBtn.addEventListener('click', function(event) {
@@ -316,22 +343,25 @@
                         selected.push(parseInt(cb.value));
                     });
 
+                    // Lấy CSRF Token
                     var metaCsrf = qs('meta[name="csrf-token"]');
                     var csrfToken = metaCsrf ? metaCsrf.getAttribute('content') : '';
 
-                    // Sửa lỗi: Sử dụng FormData để gửi dữ liệu POST cho MainController
-                    var formData = new FormData();
-                    formData.append('property_id', parseInt(window.currentPropertyId));
-                    formData.append('_csrf', csrfToken);
-                    selected.forEach(function(id) {
-                        // MainController mong đợi key là 'collection_ids[]'
-                        formData.append('collection_ids[]', id);
-                    });
+                    // Payload JSON
+                    var payload = {
+                        property_id: parseInt(window.currentPropertyId),
+                        collections: selected,
+                        _csrf: csrfToken
+                    };
 
-                    // Sửa lỗi: Gọi đúng API của MainController là /add-to-collection
-                    fetch(window.BASE_URL + '/add-to-collection', {
+                    // Gọi API lưu
+                    fetch(window.BASE_URL + '/admin/save-to-collections', {
                             method: 'POST',
-                            body: formData
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
                         })
                         .then(function(res) {
                             return res.text().then(function(text) {
@@ -344,8 +374,7 @@
                             });
                         })
                         .then(function(json) {
-                            // Sửa lỗi: MainController trả về key 'success'
-                            if (json.success) {
+                            if (json.ok || json.success) {
                                 saveModal.style.display = 'none';
 
                                 // Cập nhật icon ngay lập tức
@@ -411,7 +440,7 @@
                     formData.append('id', window.currentPropertyId);
                     formData.append('status', newStatus);
 
-                    fetch(window.BASE_URL + '/update-resource-status', {
+                    fetch(window.BASE_URL + '/admin/update-resource-status', {
                             method: 'POST',
                             body: formData
                         })
@@ -437,7 +466,7 @@
                 applyFilter.addEventListener('click', function() {
                     var status = qs('#filter-status').value;
                     var address = qs('#filter-address').value;
-                    var url = new URL(window.BASE_URL + '/management-resource-rent', window.location.origin);
+                    var url = new URL(window.BASE_URL + '/admin/management-resource-rent', window.location.origin);
                     url.searchParams.set('page', '1');
                     if (status && status !== 'all') url.searchParams.set('status', status);
                     if (address) url.searchParams.set('address', address);
@@ -449,9 +478,9 @@
             if (applySearch) {
                 applySearch.addEventListener('click', function() {
                     var search = qs('#search-input').value;
-                    var url = new URL(window.BASE_URL + '/management-resource-rent', window.location.origin);
+                    var url = new URL(window.BASE_URL + '/admin/management-resource-rent', window.location.origin);
                     url.searchParams.set('page', '1');
-                    if (search) url.searchParams.set('q', search); // Code cũ dùng 'search', code mới dùng 'q'
+                    if (search) url.searchParams.set('q', search);
                     window.location.href = url.toString();
                 });
             }

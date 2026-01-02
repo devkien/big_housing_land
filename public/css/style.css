@@ -513,6 +513,10 @@ body {
     margin-bottom: 8px;
 }
 
+img.avatar {
+    object-fit:cover;
+}
+
 .avatar {
     width: 30px;
     height: 30px;

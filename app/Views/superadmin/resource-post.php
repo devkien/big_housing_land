@@ -22,6 +22,7 @@
         <?php require_once __DIR__ . '/../../Helpers/functions.php'; ?>
         <form action="<?= BASE_URL ?>/superadmin/management-resource-post" method="post" enctype="multipart/form-data">
             <?= csrf_field() ?>
+            <input type="hidden" name="tinh_trang_duyet" value="da_duyet">
             <div class="post-form-scroll" style="padding-bottom: 80px;">
                 <div class="alert-wrapper">
                     <?php require_once __DIR__ . '/../partials/alert.php'; ?>
@@ -32,13 +33,27 @@
                     <?php $currentName = \Auth::user()['ho_ten'] ?? ''; ?>
                     <input type="text" name="ho_ten" class="form-input focus-blue" value="<?= htmlspecialchars($currentName ?: 'Họ tên đầu chủ', ENT_QUOTES, 'UTF-8') ?>" <?= $currentName ? 'readonly' : '' ?>>
                 </div>
+                
                 <div class="form-group">
-                    <select class="form-input" name="phong_ban">
-                        <option value="">Chọn Phòng Ban</option>
-                        <option value="thien_chien">Thiện Chiến</option>
-                        <option value="hung_phat">Hùng Phát</option>
-                        <option value="tinh_nhue">Tinh Nhuệ</option>
-                    </select>
+                    <?php 
+                        $currentUser = \Auth::user();
+                        $phongBanRaw = $currentUser['phong_ban'] ?? ''; 
+                        $mapTenPB = [
+                            'thien_chien' => 'Thiện Chiến',
+                            'hung_phat'   => 'Hùng Phát',
+                            'tinh_nhue'   => 'Tinh Nhuệ',
+                            'admin'       => 'Ban Quản Trị',
+                            ''            => 'Chưa có phòng ban'
+                        ];
+                        $tenHienThi = $mapTenPB[$phongBanRaw] ?? $phongBanRaw; 
+                    ?>
+                    
+                    <input type="text" class="form-input" 
+                        value="<?= htmlspecialchars($tenHienThi) ?>" 
+                        readonly 
+                        style="background-color: #e9ecef; cursor: not-allowed; color: #555;">
+
+                    <input type="hidden" name="phong_ban" value="<?= htmlspecialchars($phongBanRaw) ?>">
                 </div>
 
                 <div class="form-section-title">Thông tin BĐS</div>
@@ -126,18 +141,23 @@
                         <option>VND</option>
                     </select>
                 </div>
+                
                 <div class="form-section-title">Địa chỉ</div>
+                
                 <div class="form-group" style="position: relative;">
-                    <select id="select-province" name="tinh_thanh" class="form-input" required>
+                    <select id="select-province" class="form-input" required>
                         <option value="" disabled selected>-- Chọn Tỉnh / Thành --</option>
                     </select>
-
+                    <input type="hidden" name="tinh_thanh" id="input-tinh-thanh">
                 </div>
+                
                 <div class="form-group" style="position: relative;">
-                    <select id="select-ward" name="xa_phuong" class="form-input">
+                    <select id="select-ward" class="form-input">
                         <option value="" disabled selected>-- Chọn Xã / Phường (nếu có) --</option>
                     </select>
+                    <input type="hidden" name="xa_phuong" id="input-xa-phuong">
                 </div>
+
                 <div class="form-group">
                     <input type="text" name="dia_chi_chi_tiet" class="form-input" placeholder="Số nhà, tên đường">
                 </div>
@@ -172,7 +192,7 @@
 
     <script>
         (function() {
-            // Prefer application BASE_URL -> /{base}/api/locations.php
+            // URL API
             const urls = [
                 '<?= BASE_URL ?>' + '/api/locations.php',
                 '<?= BASE_URL ?>' + '/public/api/locations.php',
@@ -182,6 +202,10 @@
 
             const $prov = document.getElementById('select-province');
             const $ward = document.getElementById('select-ward');
+            
+            // Input hidden lưu DB
+            const $inputProv = document.getElementById('input-tinh-thanh');
+            const $inputWard = document.getElementById('input-xa-phuong');
 
             function clearSelect(el, placeholder) {
                 el.innerHTML = '';
@@ -197,31 +221,43 @@
                 clearSelect($prov, '-- Chọn Tỉnh / Thành --');
                 Object.keys(data).forEach(slug => {
                     const opt = document.createElement('option');
-                    opt.value = slug;
+                    // QUAN TRỌNG: Lưu TÊN (name) vào value của option luôn
+                    // Để khi user chọn, ta lấy được TÊN ngay lập tức.
+                    // Đồng thời lưu slug vào attribute data-slug để dùng tra cứu huyện/xã
+                    opt.value = data[slug].name || slug; 
                     opt.textContent = data[slug].name || slug;
+                    opt.setAttribute('data-slug', slug); 
+                    
                     $prov.appendChild(opt);
                 });
             }
 
             function populateWards(data, provSlug) {
                 clearSelect($ward, '-- Chọn Xã / Phường (nếu có) --');
+                // Reset input xã phường
+                $inputWard.value = '';
+                
                 if (!provSlug || !data[provSlug]) return;
+                
                 const districts = data[provSlug].districts || {};
-                // Aggregate all wards (xã/phường) from every district under the province
                 const allWards = [];
                 Object.keys(districts).forEach(dslug => {
                     const wards = districts[dslug].wards || [];
                     wards.forEach(w => allWards.push(w));
                 });
-                // Remove duplicates by id/name if any, then populate
+                
                 const seen = new Set();
                 allWards.forEach(w => {
-                    const id = w.id || w.name;
-                    if (seen.has(id)) return;
-                    seen.add(id);
+                    // Xử lý nếu w là object {name, id} hoặc string
+                    const name = w.name || w.id || w;
+                    
+                    if (seen.has(name)) return;
+                    seen.add(name);
+                    
                     const opt = document.createElement('option');
-                    opt.value = id;
-                    opt.textContent = w.name || id;
+                    // QUAN TRỌNG: Lưu TÊN vào value để gửi đi
+                    opt.value = name; 
+                    opt.textContent = name;
                     $ward.appendChild(opt);
                 });
             }
@@ -235,20 +271,42 @@
                     if (!data || Object.keys(data).length === 0) return console.warn('Locations data empty');
                     window._locationsData = data;
                     populateProvinces(data);
-                    // If a province is already selected (e.g., preserved value), populate wards immediately
-                    if ($prov.value) populateWards(window._locationsData || {}, $prov.value);
                 }).catch(() => tryFetch(index + 1));
             }
 
+            // --- XỬ LÝ SỰ KIỆN ---
+            
+            // 1. Khi chọn Tỉnh
             $prov.addEventListener('change', function() {
-                const prov = this.value;
-                populateWards(window._locationsData || {}, prov);
+                // 'this.value' bây giờ chứa TÊN tỉnh (do ta set ở populateProvinces)
+                const selectedName = this.value;
+                
+                // Cập nhật input hidden để lưu vào DB
+                $inputProv.value = selectedName;
+                
+                // Lấy slug từ attribute data-slug để load xã phường tương ứng
+                const selectedOption = this.options[this.selectedIndex];
+                const slug = selectedOption.getAttribute('data-slug');
+                
+                if (slug) {
+                    populateWards(window._locationsData || {}, slug);
+                } else {
+                    clearSelect($ward, '-- Chọn Xã / Phường (nếu có) --');
+                }
+            });
+
+            // 2. Khi chọn Xã
+            $ward.addEventListener('change', function() {
+                // 'this.value' chứa TÊN xã
+                const selectedName = this.value;
+                // Cập nhật input hidden
+                $inputWard.value = selectedName;
             });
 
             // init
             tryFetch(0);
 
-            // Toggle Mã số sổ input when Pháp lý changes
+            // Toggle Mã số sổ input
             const phapLySelect = document.querySelector('select[name="phap_ly"]');
             const maSoGroup = document.getElementById('ma-so-so-group');
             const maSoInput = maSoGroup ? maSoGroup.querySelector('input[name="ma_so_so"]') : null;
@@ -261,12 +319,10 @@
             }
             if (phapLySelect) {
                 phapLySelect.addEventListener('change', toggleMaSo);
-                // initial state
                 toggleMaSo();
             }
         })();
     </script>
 
 </body>
-
 </html>

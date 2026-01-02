@@ -45,10 +45,11 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
                         <th style="width: 100px;">THỜI GIAN</th>
-                        <th style="width: 100px;">PHÒNG BAN</th>
+
                         <th style="width: 240px;">TIÊU ĐỀ</th>
+
                         <th style="width: 100px;">LOẠI BĐS</th>
                         <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 80px;">CÓ SỔ</th>
@@ -59,8 +60,14 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
+
                         <th style="width:120px;">HIỆN TRẠNG</th>
+
                         <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
+                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
+                        <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,6 +87,15 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
+                            // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
+                            $currentUser = \Auth::user();
+                            $currentUserId = $currentUser['id'] ?? 0;
+                            $postUserId = $p['user_id'] ?? 0;
+                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+
+                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
+                                continue;
+                            }
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
                             $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
@@ -112,13 +128,17 @@
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
                                 <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
+                                
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
-                                <td style="cursor:pointer; color:#0b66ff;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'"><?= $code ?></td>
+
                                 <td><?= $created ?></td>
-                                <td><?= $phong_ban ?></td>
-                                <td><?= $tieu_de ?></td>
+
+                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                                    <?= $tieu_de ?>
+                                </td>
+
                                 <td><?= htmlspecialchars($loai_bds) ?></td>
                                 <td><?= htmlspecialchars($loai_kho) ?></td>
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
@@ -129,9 +149,15 @@
                                 <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
                                 <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
                                 <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+
                                 <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
+                                <td><?= $code ?></td>
+
+                                <td><?= $phong_ban ?></td>
                             </tr>
                     <?php
                         endforeach;
@@ -465,3 +491,5 @@
         })();
     </script>
 </body>
+
+</html>

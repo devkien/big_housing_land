@@ -4,24 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kho nhà cho thuê</title>
+    <title>Kho tài nguyên</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/style.css">
     <script src="<?= BASE_URL ?>/public/js/script.js"></script>
+
     <?php require_once __DIR__ . '/../../Helpers/functions.php'; ?>
     <meta name="csrf-token" content="<?= csrf_token() ?>">
+
     <script>
-        window.BASE_URL = '<?= BASE_URL ?>';
-        window.BASE_PATH = window.BASE_URL;
-    </script>
-    <script>
-        // Mock CKEditor để tránh lỗi trong script.js vì trang này không cần bộ soạn thảo
+        // Mock CKEditor
         window.ClassicEditor = {
             create: function() {
-                // Trả về Promise không bao giờ resolve để script.js không làm gì tiếp theo
                 return new Promise(() => {});
             }
         };
+        // Định nghĩa BASE_URL để JS sử dụng
+        window.BASE_URL = '<?= BASE_URL ?>';
+        window.BASE_PATH = window.BASE_URL;
+        window.CURRENT_RESOURCE_TYPE = 'kho_nha_dat';
     </script>
     <script src="<?= BASE_URL ?>/js/script.js"></script>
 </head>
@@ -30,17 +31,14 @@
     <div class="app-container" style="background: white;">
 
         <header class="resource-header">
-            <a href="<?= BASE_URL ?>/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <a href="<?= BASE_URL ?>/admin/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
             <div class="resource-title">Kho tài nguyên</div>
             <div class="header-icon-btn"></div>
         </header>
-
         <div class="tabs-container">
-
             <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/management-resource-sum'">Kho nhà đất</button>
             <button class="tab-btn active">Kho nhà cho thuê</button>
         </div>
-
         <div class="toolbar-section">
             <button class="tool-btn" id="btn-filter"><i class="fa-solid fa-filter"></i> Lọc</button>
             <div style="flex:1;"></div>
@@ -51,10 +49,11 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
                         <th style="width: 100px;">THỜI GIAN</th>
-                        <th style="width: 100px;">PHÒNG BAN</th>
+
                         <th style="width: 240px;">TIÊU ĐỀ</th>
+
                         <th style="width: 100px;">LOẠI BĐS</th>
                         <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 80px;">CÓ SỔ</th>
@@ -65,8 +64,14 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
+
                         <th style="width:120px;">HIỆN TRẠNG</th>
+
                         <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
+                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
+                        <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +91,15 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
+                            // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
+                            $currentUser = \Auth::user();
+                            $currentUserId = $currentUser['id'] ?? 0;
+                            $postUserId = $p['user_id'] ?? 0;
+                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+
+                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
+                                continue;
+                            }
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
                             $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
@@ -118,13 +132,17 @@
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
                                 <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
+                                
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
-                                <td style="cursor:pointer; color:#0b66ff;" onclick="window.location.href='<?= BASE_URL ?>/detail?id=<?= htmlspecialchars($p['id']) ?>'"><?= $code ?></td>
+
                                 <td><?= $created ?></td>
-                                <td><?= $phong_ban ?></td>
-                                <td><?= $tieu_de ?></td>
+
+                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                                    <?= $tieu_de ?>
+                                </td>
+
                                 <td><?= htmlspecialchars($loai_bds) ?></td>
                                 <td><?= htmlspecialchars($loai_kho) ?></td>
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
@@ -135,9 +153,15 @@
                                 <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
                                 <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
                                 <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+
                                 <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
+                                <td><?= $code ?></td>
+
+                                <td><?= $phong_ban ?></td>
                             </tr>
                     <?php
                         endforeach;
@@ -148,7 +172,6 @@
         </div>
         <div class="pagination-container">
             <?php
-            // Build query string to persist filters
             $queryParams = [];
             if (!empty($status)) $queryParams['status'] = $status;
             if (!empty($address)) $queryParams['address'] = $address;
@@ -156,20 +179,19 @@
             ?>
 
             <?php if ($page > 1): ?>
-                <a href="<?= BASE_URL ?>/management-resource-rent?page=<?= $page - 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
+                <a href="<?= BASE_URL ?>/admin/management-resource?page=<?= $page - 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-left"></i></a>
             <?php endif; ?>
 
             <a href="#" class="page-link active"><?= $page ?> / <?= $pages > 0 ? $pages : 1 ?></a>
 
             <?php if ($page < $pages): ?>
-                <a href="<?= BASE_URL ?>/management-resource-rent?page=<?= $page + 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="<?= BASE_URL ?>/admin/management-resource?page=<?= $page + 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
             <?php endif; ?>
         </div>
-        <!-- Modal Lọc -->
+
         <div id="filter-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Bộ lọc tìm kiếm</h3>
-
                 <div class="filter-group">
                     <label class="filter-label">Hiện trạng</label>
                     <select id="filter-status" class="filter-select">
@@ -182,7 +204,6 @@
                         <option value="ha_chao" <?= (isset($status) && $status === 'ha_chao') ? 'selected' : '' ?>>Hạ chào</option>
                     </select>
                 </div>
-
                 <div class="filter-group">
                     <label class="filter-label">Mã tin / Địa chỉ</label>
                     <input type="text" id="filter-address" class="filter-input" placeholder="Nhập mã tin (VD: 1277)..." value="<?= htmlspecialchars($address ?? '') ?>">
@@ -193,7 +214,20 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Lưu vào bộ sưu tập -->
+
+        <div id="search-modal" class="modal">
+            <div class="modal-content">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Tìm kiếm</h3>
+                <div class="filter-group">
+                    <input type="text" id="search-input" class="filter-input" placeholder="Nhập từ khóa (Mã tin, địa chỉ, ghi chú)...">
+                </div>
+                <div class="modal-actions">
+                    <button id="close-search" class="btn-cancel">Hủy</button>
+                    <button id="apply-search" class="btn-apply">Tìm kiếm</button>
+                </div>
+            </div>
+        </div>
+
         <div id="save-collection-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Lưu vào bộ sưu tập</h3>
@@ -202,7 +236,7 @@
                         <?php if (!empty($collections)): ?>
                             <?php foreach ($collections as $c): ?>
                                 <label class="collection-option" style="display: flex; align-items: center; padding: 10px; border-bottom: 1px solid #eee; cursor: pointer;">
-                                    <input type="checkbox" name="collection[]" value="<?= $c['id'] ?>" style="margin-right: 10px;">
+                                    <input type="checkbox" name="collection" value="<?= $c['id'] ?>" style="margin-right: 10px;">
                                     <span style="font-size: 14px; color: #000;"><?= htmlspecialchars($c['ten_bo_suu_tap']) ?></span>
                                 </label>
                             <?php endforeach; ?>
@@ -217,11 +251,10 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Cập nhật trạng thái (Khi ấn icon ghi chú) -->
+
         <div id="status-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Cập nhật trạng thái</h3>
-
                 <div class="filter-group">
                     <label class="filter-label">Chọn trạng thái mới</label>
                     <select id="edit-status-select" class="filter-select">
@@ -233,27 +266,27 @@
                         <option value="ha_chao">Hạ chào</option>
                     </select>
                 </div>
-
                 <div class="modal-actions">
                     <button id="close-status-modal" class="btn-cancel">Hủy</button>
                     <button id="save-status-btn" class="btn-apply">Lưu</button>
                 </div>
             </div>
         </div>
+
         <div id="bottom-nav-container">
             <?php require_once __DIR__ . '/layouts/bottom-nav.php'; ?>
         </div>
-
     </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Helper functions
-            function qs(sel) {
-                return document.querySelector(sel);
+        (function() {
+            // Helper functions để chọn phần tử nhanh
+            function qs(sel, ctx) {
+                return (ctx || document).querySelector(sel);
             }
 
-            function qsa(sel) {
-                return document.querySelectorAll(sel);
+            function qsa(sel, ctx) {
+                return Array.prototype.slice.call((ctx || document).querySelectorAll(sel));
             }
 
             // Các biến Modal
@@ -263,11 +296,10 @@
             var saveModal = qs('#save-collection-modal');
             window.currentPropertyId = null;
 
-            // --- 1. SỰ KIỆN MỞ MODAL LƯU (Icon Bookmark) ---
+            // --- 1. Xử lý mở Modal Lưu Bộ Sưu Tập ---
             qsa('.icon-save').forEach(function(el) {
                 el.addEventListener('click', function(ev) {
-                    ev.stopPropagation(); // Ngăn sự kiện click tr
-
+                    ev.stopPropagation();
                     var tr = el.closest('tr');
                     window.currentPropertyId = tr ? tr.getAttribute('data-id') : null;
 
@@ -275,32 +307,32 @@
                         saveModal.style.display = 'flex';
 
                         // Reset checkboxes
-                        qsa('#save-collection-modal input[name="collection[]"]').forEach(function(cb) {
+                        qsa('#save-collection-modal input[name="collection"]').forEach(function(cb) {
                             cb.checked = false;
                         });
 
-                        // Gọi API lấy dữ liệu đã lưu
-                        // Đường dẫn: /admin/get-property-collections
-                        fetch(window.BASE_URL + '/get-property-collections?id=' + window.currentPropertyId)
+                        // Gọi API để lấy danh sách BST đã lưu của tài nguyên này
+                        // (Để tick sẵn vào checkbox)
+                        fetch(window.BASE_URL + '/admin/get-property-collections?id=' + window.currentPropertyId)
                             .then(function(r) {
                                 return r.json();
                             })
                             .then(function(data) {
                                 if (data.success && data.collection_ids) {
                                     data.collection_ids.forEach(function(cid) {
-                                        var cb = qs('#save-collection-modal input[name="collection[]"][value="' + cid + '"]');
+                                        var cb = qs('#save-collection-modal input[name="collection"][value="' + cid + '"]');
                                         if (cb) cb.checked = true;
                                     });
                                 }
                             })
                             .catch(function(e) {
-                                console.error('Lỗi tải dữ liệu collection:', e);
+                                console.error('Lỗi tải dữ liệu:', e);
                             });
                     }
                 });
             });
 
-            // --- 2. SỰ KIỆN NÚT LƯU (QUAN TRỌNG: ĐÃ SỬA LỖI) ---
+            // --- 2. Xử lý nút LƯU (Gửi JSON chuẩn) ---
             var confirmSaveBtn = qs('#confirm-save-collection');
             if (confirmSaveBtn) {
                 confirmSaveBtn.addEventListener('click', function(event) {
@@ -308,45 +340,38 @@
                     if (!window.currentPropertyId) return;
 
                     // Lấy danh sách ID đã chọn (ép kiểu Int)
-                    var selected = [];
-                    qsa('#save-collection-modal input[name="collection[]"]:checked').forEach(function(cb) {
-                        selected.push(parseInt(cb.value));
+                    var selected = qsa('#save-collection-modal input[name="collection"]:checked').map(function(cb) {
+                        return parseInt(cb.value);
                     });
 
                     // Lấy CSRF Token
                     var metaCsrf = qs('meta[name="csrf-token"]');
                     var csrfToken = metaCsrf ? metaCsrf.getAttribute('content') : '';
 
-                    // Sử dụng FormData để gửi dữ liệu POST cho MainController
-                    var formData = new FormData();
-                    formData.append('property_id', parseInt(window.currentPropertyId));
-                    formData.append('_csrf', csrfToken);
-                    selected.forEach(function(id) {
-                        formData.append('collection_ids[]', id);
-                    });
+                    // Payload JSON
+                    var payload = {
+                        property_id: parseInt(window.currentPropertyId),
+                        collections: selected,
+                        _csrf: csrfToken
+                    };
 
-                    // Gọi API lưu
-                    fetch(window.BASE_URL + '/add-to-collection', {
+                    // Gọi API lưu (đường dẫn admin)
+                    fetch(window.BASE_URL + '/admin/save-to-collections', {
                             method: 'POST',
-                            body: formData
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
                         })
                         .then(function(res) {
-                            return res.text().then(function(text) {
-                                try {
-                                    return JSON.parse(text); // Cố gắng parse JSON
-                                } catch (e) {
-                                    // Nếu server trả về HTML lỗi hoặc PHP Warning -> In ra console để xem
-                                    console.error("Server Response Error (Not JSON):", text);
-                                    throw new Error("Server trả về dữ liệu lỗi. Hãy bật F12 > Console để xem chi tiết.");
-                                }
-                            });
+                            return res.json();
                         })
-                        // --------------------------------------
                         .then(function(json) {
                             if (json.ok || json.success) {
                                 saveModal.style.display = 'none';
 
-                                // Cập nhật icon ngay lập tức
+                                // Cập nhật màu icon bookmark ngay lập tức
                                 var tr = qs('tr[data-id="' + window.currentPropertyId + '"]');
                                 if (tr) {
                                     var icon = tr.querySelector('.icon-save');
@@ -363,7 +388,7 @@
                                     }
                                 }
                             } else {
-                                console.error('Lỗi từ server: ' + (json.message || 'Không thể lưu.'));
+                                console.error('Lỗi: ' + (json.message || 'Không thể lưu.'));
                             }
                         })
                         .catch(function(err) {
@@ -389,17 +414,19 @@
                 if (e.target == saveModal) saveModal.style.display = 'none';
             });
 
-            // --- 4. Logic Icon Note (Cập nhật trạng thái) ---
+            // --- 4. Logic cho Icon Note (Cập nhật trạng thái) ---
             qsa('.icon-note').forEach(function(cell) {
                 cell.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    window.currentPropertyId = cell.closest('tr').getAttribute('data-id');
-                    var currentStatus = cell.getAttribute('data-status');
+                    var tr = cell.closest('tr');
+                    window.currentPropertyId = tr ? tr.getAttribute('data-id') : null;
+                    var currentStatus = '';
                     var select = qs('#edit-status-select');
                     if (select) select.value = currentStatus;
                     if (statusModal) statusModal.style.display = 'flex';
                 });
             });
+
             var saveStatusBtn = qs('#save-status-btn');
             if (saveStatusBtn) {
                 saveStatusBtn.addEventListener('click', function() {
@@ -409,7 +436,7 @@
                     formData.append('id', window.currentPropertyId);
                     formData.append('status', newStatus);
 
-                    fetch(window.BASE_URL + '/update-resource-status', {
+                    fetch(window.BASE_URL + '/admin/update-resource-status', {
                             method: 'POST',
                             body: formData
                         })
@@ -435,7 +462,7 @@
                 applyFilter.addEventListener('click', function() {
                     var status = qs('#filter-status').value;
                     var address = qs('#filter-address').value;
-                    var url = new URL(window.BASE_URL + '/management-resource-rent', window.location.origin);
+                    var url = new URL(window.BASE_URL + '/admin/management-resource', window.location.origin);
                     url.searchParams.set('page', '1');
                     if (status && status !== 'all') url.searchParams.set('status', status);
                     if (address) url.searchParams.set('address', address);
@@ -447,14 +474,14 @@
             if (applySearch) {
                 applySearch.addEventListener('click', function() {
                     var search = qs('#search-input').value;
-                    var url = new URL(window.BASE_URL + '/management-resource-rent', window.location.origin);
+                    var url = new URL(window.BASE_URL + '/admin/management-resource', window.location.origin);
                     url.searchParams.set('page', '1');
-                    if (search) url.searchParams.set('q', search); // Code cũ dùng 'search', code mới dùng 'q'
+                    if (search) url.searchParams.set('search', search);
                     window.location.href = url.toString();
                 });
             }
 
-            // Nút mở modal
+            // Các nút mở modal filter/search
             var btnFilter = qs('#btn-filter');
             if (btnFilter) btnFilter.addEventListener('click', function() {
                 filterModal.style.display = 'flex';
@@ -465,7 +492,7 @@
                 searchModal.style.display = 'flex';
             });
 
-        });
+        })();
     </script>
 </body>
 

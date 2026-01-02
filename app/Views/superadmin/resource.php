@@ -27,7 +27,6 @@
 
         <div class="tabs-container">
             <button class="tab-btn active">Kho nhà đất</button>
-
             <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-rent'">Kho nhà cho thuê</button>
         </div>
 
@@ -40,12 +39,16 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-                        <th style="width: 60px;">GHI CHÚ</th>
+                        <th style="width: 60px; text-align: center;">SỬA</th>
                         <th style="width: 100px;">HÀNH ĐỘNG</th>
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
                         <th style="width: 100px;">THỜI GIAN</th>
-                        <th style="width: 100px;">PHÒNG BAN</th>
+
                         <th style="width: 240px;">TIÊU ĐỀ</th>
+
+                        <th style="width: 120px;">HIỆN TRẠNG</th>
+                        <th style="min-width: 200px;">ĐỊA CHỈ</th>
+
                         <th style="width: 100px;">LOẠI BĐS</th>
                         <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 80px;">CÓ SỔ</th>
@@ -56,8 +59,9 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
-                        <th style="width:120px;">HIỆN TRẠNG</th>
-                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
+                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+                        <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -79,32 +83,33 @@
                         foreach ($properties as $p) :
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
-                            $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
-                            $address = trim($p['dia_chi_chi_tiet'] ?? '');
-                            if ($address === '') {
-                                $parts = array_filter([$p['tinh_thanh'] ?? '', $p['quan_huyen'] ?? '', $p['xa_phuong'] ?? '']);
-                                $address = htmlspecialchars(implode(', ', $parts));
-                            } else {
-                                $address = htmlspecialchars($address);
-                            }
+                            $statusKey = $p['trang_thai'] ?? '';
+                            $status = $statusMap[$statusKey] ?? $statusKey;
+                            
+                            $addrParts = array_filter([
+                                $p['dia_chi_chi_tiet'] ?? '', 
+                                $p['xa_phuong'] ?? '', 
+                                $p['quan_huyen'] ?? '', 
+                                $p['tinh_thanh'] ?? ''
+                            ]);
+                            $address = htmlspecialchars(implode(', ', $addrParts));
+
+                            $currentStatus = htmlspecialchars($p['trang_thai'] ?? 'ban_manh');
+                            $currentApproval = htmlspecialchars($p['tinh_trang_duyet'] ?? 'cho_duyet');
                         ?>
                             <?php
-                            // friendly labels / formatting
                             $phong_ban = htmlspecialchars($p['phong_ban'] ?? '');
                             $tieu_de = htmlspecialchars($p['tieu_de'] ?? '');
-                            $loai_bds_map = ['ban' => 'Bán', 'cho_thue' => 'Cho thuê'];
-                            $loai_bds = $loai_bds_map[$p['loai_bds'] ?? ''] ?? ($p['loai_bds'] ?? '');
-                            $loai_kho_map = ['kho_nha_dat' => 'Kho nhà đất', 'kho_cho_thue' => 'Kho cho thuê'];
-                            $loai_kho = $loai_kho_map[$p['loai_kho'] ?? ''] ?? ($p['loai_kho'] ?? '');
-                            $phap_ly_map = ['co_so' => 'Có sổ', 'khong_so' => 'Không sổ'];
-                            $phap_ly = $phap_ly_map[$p['phap_ly'] ?? ''] ?? ($p['phap_ly'] ?? '');
+                            $loai_bds = $p['loai_bds'] === 'ban' ? 'Bán' : 'Cho thuê';
+                            $loai_kho = $p['loai_kho'] === 'kho_nha_dat' ? 'Kho nhà đất' : 'Kho cho thuê';
+                            $phap_ly = $p['phap_ly'] === 'co_so' ? 'Có sổ' : 'Không sổ';
                             $ma_so_so = htmlspecialchars($p['ma_so_so'] ?? '');
-                            $dien_tich = isset($p['dien_tich']) && $p['dien_tich'] !== null ? (float)$p['dien_tich'] : null;
+                            $dien_tich = isset($p['dien_tich']) ? (float)$p['dien_tich'] : null;
                             $don_vi = htmlspecialchars($p['don_vi_dien_tich'] ?? '');
-                            $chieu_dai = isset($p['chieu_dai']) && $p['chieu_dai'] !== null ? (float)$p['chieu_dai'] : null;
-                            $chieu_rong = isset($p['chieu_rong']) && $p['chieu_rong'] !== null ? (float)$p['chieu_rong'] : null;
-                            $so_tang = isset($p['so_tang']) && $p['so_tang'] !== null ? (int)$p['so_tang'] : null;
-                            $gia_chao = isset($p['gia_chao']) && $p['gia_chao'] !== null ? (float)$p['gia_chao'] : null;
+                            $chieu_dai = isset($p['chieu_dai']) ? (float)$p['chieu_dai'] : null;
+                            $chieu_rong = isset($p['chieu_rong']) ? (float)$p['chieu_rong'] : null;
+                            $so_tang = isset($p['so_tang']) ? (int)$p['so_tang'] : null;
+                            $gia_chao = isset($p['gia_chao']) ? (float)$p['gia_chao'] : null;
                             $gia_chao_fmt = $gia_chao !== null ? number_format($gia_chao, 0, ',', '.') . ' VND' : '';
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
@@ -112,8 +117,12 @@
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid saved' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
-                                <td><i class="fa-regular fa-note-sticky icon-note"></i></td>
 
+                                <td style="text-align: center; cursor: pointer;" 
+                                    onclick="openQuickEditModal(<?= $p['id'] ?>, '<?= $currentStatus ?>', '<?= $currentApproval ?>')"
+                                    title="Cập nhật trạng thái">
+                                    <i class="fa-regular fa-pen-to-square icon-note" style="color: #e65100; font-size: 16px;"></i>
+                                </td>
                                 <td style="text-align: center;">
                                     <a href="<?= BASE_URL ?>/superadmin/management-resource-edit?id=<?= $p['id'] ?>" title="Sửa" style="color: #0044cc; margin-right: 10px;">
                                         <i class="fa-solid fa-pen"></i>
@@ -124,23 +133,26 @@
                                     </form>
                                 </td>
 
-                                <td style="cursor:pointer; color:#0b66ff;" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-detail?id=<?= htmlspecialchars($p['id']) ?>'"><?= $code ?></td>
                                 <td><?= $created ?></td>
-                                <td><?= $phong_ban ?></td>
-                                <td><?= $tieu_de ?></td>
+
+                                <td onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-detail?id=<?= htmlspecialchars($p['id']) ?>'" style="cursor:pointer; font-weight:bold; color:#0b66ff;"><?= $tieu_de ?></td>
+
+                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+                                <td style="font-weight: 500; color: #333;"><?= $address ?></td>
+
                                 <td><?= htmlspecialchars($loai_bds) ?></td>
                                 <td><?= htmlspecialchars($loai_kho) ?></td>
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
                                 <td><?= $ma_so_so ?></td>
-                                <td><?= $dien_tich !== null ? rtrim(rtrim(number_format($dien_tich, 2, ',', '.'), '0'), ',') : '' ?></td>
+                                <td><?= $dien_tich !== null ? number_format($dien_tich, 2, ',', '.') : '' ?></td>
                                 <td><?= $don_vi ?></td>
-                                <td><?= $chieu_dai !== null ? rtrim(rtrim(number_format($chieu_dai, 2, ',', '.'), '0'), ',') : '' ?></td>
-                                <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
-                                <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
-                                <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
-                                <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
-                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
-                                <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+                                <td><?= $chieu_dai !== null ? number_format($chieu_dai, 2, ',', '.') : '' ?></td>
+                                <td><?= $chieu_rong !== null ? number_format($chieu_rong, 2, ',', '.') : '' ?></td>
+                                <td><?= $so_tang !== null ? $so_tang : '' ?></td>
+                                <td style="text-align:right; padding-right:15px; color: #d32f2f; font-weight: bold;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
+                                <td style="color: #666;"><?= $code ?></td>
+                                <td style="color: #666;"><?= $phong_ban ?></td>
                             </tr>
                     <?php
                         endforeach;
@@ -149,13 +161,12 @@
                 </tbody>
             </table>
         </div>
-        <div class="pagination-container">
-        </div>
+        
+        <div class="pagination-container"></div>
 
         <div id="filter-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Bộ lọc tìm kiếm</h3>
-
                 <div class="filter-group">
                     <label class="filter-label">Hiện trạng</label>
                     <select id="filter-status" class="filter-select">
@@ -193,7 +204,6 @@
         <div id="save-collection-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Lưu vào bộ sưu tập</h3>
-
                 <div class="filter-group">
                     <div class="collection-list-select" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px; padding: 5px;">
                         <?php if (!empty($collections)) : ?>
@@ -208,38 +218,73 @@
                         <?php endif; ?>
                     </div>
                 </div>
-
                 <div class="modal-actions">
                     <button id="close-save-collection" class="btn-cancel">Hủy</button>
                     <button id="confirm-save-collection" class="btn-apply">Lưu</button>
                 </div>
             </div>
         </div>
-        <div id="status-modal" class="modal">
+
+        <div id="quick-edit-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Cập nhật trạng thái</h3>
+                
+                <form action="<?= BASE_URL ?>/superadmin/quick-update-status" method="POST">
+                    <input type="hidden" name="id" id="quick-edit-id">
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Trạng thái bán hàng</label>
+                        <select name="trang_thai" id="quick-edit-status" class="filter-select">
+                            <option value="ban_manh">Bán mạnh</option>
+                            <option value="tam_dung_ban">Tạm dừng bán</option>
+                            <option value="dung_ban">Dừng bán</option>
+                            <option value="da_ban">Đã bán</option>
+                            <option value="tang_chao">Tăng chào</option>
+                            <option value="ha_chao">Hạ chào</option>
+                        </select>
+                    </div>
 
-                <div class="filter-group">
-                    <label class="filter-label">Chọn trạng thái mới</label>
-                    <select id="edit-status-select" class="filter-select">
-                        <option value="Bán mạnh">Bán mạnh</option>
-                        <option value="Tạm dừng bán">Tạm dừng bán</option>
-                        <option value="Dừng bán">Dừng bán</option>
-                        <option value="Đã bán">Đã bán</option>
-                        <option value="Tăng chào">Tăng chào</option>
-                        <option value="Hạ chào">Hạ chào</option>
-                    </select>
-                </div>
-                <div class="modal-actions">
-                    <button id="close-status-modal" class="btn-cancel">Hủy</button>
-                    <button id="save-status-btn" class="btn-apply">Lưu</button>
-                </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Tình trạng xét duyệt</label>
+                        <select name="tinh_trang_duyet" id="quick-edit-approval" class="filter-select">
+                            <option value="cho_duyet">⏳ Chờ duyệt</option>
+                            <option value="da_duyet">✅ Đã duyệt</option>
+                            <option value="tu_choi">🚫 Từ chối</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn-cancel" onclick="document.getElementById('quick-edit-modal').style.display='none'">Hủy</button>
+                        <button type="submit" class="btn-apply">Lưu thay đổi</button>
+                    </div>
+                </form>
             </div>
         </div>
         <div id="bottom-nav-container">
             <?php require_once __DIR__ . '/layouts/bottom-nav.php'; ?>
         </div>
     </div>
-</body>
 
+    <script>
+        function openQuickEditModal(id, currentStatus, currentApproval) {
+            document.getElementById('quick-edit-id').value = id;
+            
+            const statusSelect = document.getElementById('quick-edit-status');
+            if (statusSelect) statusSelect.value = currentStatus;
+            
+            const approvalSelect = document.getElementById('quick-edit-approval');
+            if (approvalSelect) approvalSelect.value = currentApproval || 'cho_duyet';
+            
+            document.getElementById('quick-edit-modal').style.display = 'block';
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById('quick-edit-modal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
 </html>

@@ -18,7 +18,6 @@
         // Mock CKEditor để tránh lỗi trong script.js vì trang này không cần bộ soạn thảo
         window.ClassicEditor = {
             create: function() {
-                // Trả về Promise không bao giờ resolve để script.js không làm gì tiếp theo
                 return new Promise(() => {});
             }
         };
@@ -36,7 +35,6 @@
         </header>
 
         <div class="tabs-container">
-
             <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/admin/management-resource-sum'">Kho nhà đất</button>
             <button class="tab-btn active">Kho nhà cho thuê</button>
         </div>
@@ -51,10 +49,11 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
                         <th style="width: 100px;">THỜI GIAN</th>
-                        <th style="width: 100px;">PHÒNG BAN</th>
+
                         <th style="width: 240px;">TIÊU ĐỀ</th>
+
                         <th style="width: 100px;">LOẠI BĐS</th>
                         <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 80px;">CÓ SỔ</th>
@@ -65,8 +64,14 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
+
                         <th style="width:120px;">HIỆN TRẠNG</th>
+
                         <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
+                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
+                        <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,6 +91,15 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
+                            // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
+                            $currentUser = \Auth::user();
+                            $currentUserId = $currentUser['id'] ?? 0;
+                            $postUserId = $p['user_id'] ?? 0;
+                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+
+                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
+                                continue;
+                            }
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
                             $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
@@ -118,13 +132,17 @@
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
                                 <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
+                                
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
-                                <td style="cursor:pointer; color:#0b66ff;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'"><?= $code ?></td>
+
                                 <td><?= $created ?></td>
-                                <td><?= $phong_ban ?></td>
-                                <td><?= $tieu_de ?></td>
+
+                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                                    <?= $tieu_de ?>
+                                </td>
+
                                 <td><?= htmlspecialchars($loai_bds) ?></td>
                                 <td><?= htmlspecialchars($loai_kho) ?></td>
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
@@ -135,9 +153,15 @@
                                 <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
                                 <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
                                 <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+
                                 <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
+                                <td><?= $code ?></td>
+
+                                <td><?= $phong_ban ?></td>
                             </tr>
                     <?php
                         endforeach;
@@ -165,7 +189,6 @@
                 <a href="<?= BASE_URL ?>/admin/management-resource-rent?page=<?= $page + 1 ?>&<?= $queryString ?>" class="page-link"><i class="fa-solid fa-chevron-right"></i></a>
             <?php endif; ?>
         </div>
-        <!-- Modal Lọc -->
         <div id="filter-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Bộ lọc tìm kiếm</h3>
@@ -193,7 +216,6 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Lưu vào bộ sưu tập -->
         <div id="save-collection-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Lưu vào bộ sưu tập</h3>
@@ -217,7 +239,6 @@
                 </div>
             </div>
         </div>
-        <!-- Modal Cập nhật trạng thái (Khi ấn icon ghi chú) -->
         <div id="status-modal" class="modal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 15px; font-size: 16px;">Cập nhật trạng thái</h3>
@@ -300,7 +321,7 @@
                 });
             });
 
-            // --- 2. SỰ KIỆN NÚT LƯU (QUAN TRỌNG: ĐÃ SỬA LỖI) ---
+            // --- 2. SỰ KIỆN NÚT LƯU ---
             var confirmSaveBtn = qs('#confirm-save-collection');
             if (confirmSaveBtn) {
                 confirmSaveBtn.addEventListener('click', function(event) {
@@ -333,19 +354,16 @@
                             },
                             body: JSON.stringify(payload)
                         })
-                        // --- ĐOẠN NÀY ĐỂ DEBUG LỖI KẾT NỐI ---
                         .then(function(res) {
                             return res.text().then(function(text) {
                                 try {
                                     return JSON.parse(text); // Cố gắng parse JSON
                                 } catch (e) {
-                                    // Nếu server trả về HTML lỗi hoặc PHP Warning -> In ra console để xem
                                     console.error("Server Response Error (Not JSON):", text);
                                     throw new Error("Server trả về dữ liệu lỗi. Hãy bật F12 > Console để xem chi tiết.");
                                 }
                             });
                         })
-                        // --------------------------------------
                         .then(function(json) {
                             if (json.ok || json.success) {
                                 saveModal.style.display = 'none';
@@ -453,7 +471,7 @@
                     var search = qs('#search-input').value;
                     var url = new URL(window.BASE_URL + '/admin/management-resource-rent', window.location.origin);
                     url.searchParams.set('page', '1');
-                    if (search) url.searchParams.set('q', search); // Code cũ dùng 'search', code mới dùng 'q'
+                    if (search) url.searchParams.set('q', search);
                     window.location.href = url.toString();
                 });
             }

@@ -262,6 +262,7 @@ $router->get('/superadmin/management-resource-edit', 'ResourceController@editRes
 $router->post('/superadmin/management-resource-edit', 'ResourceController@editResource', 'role:super_admin');
 $router->post('/superadmin/management-resource-delete', 'ResourceController@deleteResource', 'role:super_admin');
 $router->post('/superadmin/property-update-status', 'ResourceController@updateStatus', 'role:super_admin');
+$router->post('/superadmin/quick-update-status', 'ResourceController@quickUpdateStatus', 'role:super_admin');
 // Save resource to collections (AJAX)
 $router->post('/superadmin/save-to-collections', 'ResourceController@saveToCollections', 'role:super_admin');
 // Get collections that contain a given property (AJAX)
@@ -317,6 +318,7 @@ $router->get('/superadmin/cookie-policy', 'PolicyController@cookiePolicy', 'role
 
 
 $router->post('/superadmin/report-customer/delete', 'LeadReportController@delete', 'role:super_admin');
+$router->post('/superadmin/management-resource/update-status', 'ResourceController@updateStatus', 'role:super_admin');
 
 
 

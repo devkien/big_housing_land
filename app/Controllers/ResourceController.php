@@ -9,7 +9,7 @@ class ResourceController extends Controller
         $this->requireRole([ROLE_SUPER_ADMIN]);
     }
 
-    public function resourcePost()
+   public function resourcePost()
     {
         // If POST: handle form submission
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,7 +27,6 @@ class ResourceController extends Controller
             $userId = $sessionUser['id'] ?? null;
 
             // ----- Server-side mapping & validation -----
-            // Allowed enums / values (map client inputs to canonical DB values)
             $allowed = [
                 'loai_bds' => ['ban', 'cho_thue'],
                 'phap_ly' => ['co_so', 'khong_so'],
@@ -104,7 +103,6 @@ class ResourceController extends Controller
                 'loai_bds' => $loai_bds,
                 'loai_kho' => $loai_kho,
                 'phap_ly' => $phap_ly,
-                // If phap_ly indicates there is a title ('co_so'), capture the mã số sổ; otherwise store null
                 'ma_so_so' => ($phap_ly === 'co_so') ? (trim($_POST['ma_so_so'] ?? '') ?: null) : null,
                 'dien_tich' => $makeFloat($_POST['dien_tich'] ?? null),
                 'don_vi_dien_tich' => $don_vi,
@@ -121,29 +119,20 @@ class ResourceController extends Controller
                 'dia_chi_chi_tiet' => trim($_POST['dia_chi_chi_tiet'] ?? ''),
                 'mo_ta' => trim($_POST['mo_ta'] ?? ''),
                 'is_visible' => isset($_POST['is_visible']) ? 1 : 0,
-                'trang_thai' => trim($_POST['trang_thai'] ?? '')
+                
+                // --- PHẦN QUAN TRỌNG: SUPER ADMIN LUÔN ĐƯỢC DUYỆT NGAY ---
+                'trang_thai' => 'ban_manh', // Mặc định là đang bán
+                'tinh_trang_duyet' => 'da_duyet' // SuperAdmin -> Auto duyệt
             ];
 
             // Basic required fields
             if (empty($data['tieu_de']) || empty($data['tinh_thanh'])) {
                 $_SESSION['error'] = 'Vui lòng điền tiêu đề và tỉnh/thành.';
-                // debug log
-                $log = __DIR__ . '/../../storage/logs/resource_post_debug.log';
-                @file_put_contents($log, json_encode(["ts" => date('c'), "event" => "validation_failed", "reason" => "missing_title_or_province", "user_id" => ($userId ?? null), "post" => $_POST, "files_count" => (empty($_FILES) ? 0 : array_sum(array_map('count', array_filter($_FILES)))),]) . "\n", FILE_APPEND);
                 header('Location: ' . BASE_URL . '/superadmin/management-resource-post');
                 exit;
             }
 
-            // ===== map/validate trang_thai (DB enum) =====
-            $allowedStatuses = ['ban_manh', 'tam_dung_ban', 'dung_ban', 'da_ban'];
-            $trang_thai = trim($_POST['trang_thai'] ?? '');
-            if (!in_array($trang_thai, $allowedStatuses, true)) {
-                $trang_thai = 'ban_manh';
-            }
-            // ensure it's set in data
-            $data['trang_thai'] = $trang_thai;
-
-            // Ensure DB-required fields have sensible defaults to avoid insert failure
+            // Ensure DB-required fields have sensible defaults
             if (!isset($data['dien_tich']) || $data['dien_tich'] === null || $data['dien_tich'] === '') {
                 $data['dien_tich'] = 0.0;
             } else {
@@ -163,12 +152,8 @@ class ResourceController extends Controller
             $maxFiles = 12;
             $maxSize = 8 * 1024 * 1024; // 8MB each
             $allowedMimes = [
-                'image/jpeg',
-                'image/png',
-                'image/webp',
-                'image/gif',
-                'video/mp4',
-                'video/quicktime'
+                'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+                'video/mp4', 'video/quicktime'
             ];
 
             if (!empty($_FILES['media']) && is_array($_FILES['media']['tmp_name'])) {
@@ -178,29 +163,24 @@ class ResourceController extends Controller
                     header('Location: ' . BASE_URL . '/superadmin/management-resource-post');
                     exit;
                 }
-                // prepare upload dir early
                 $uploadsDir = realpath(__DIR__ . '/../../public') . '/uploads/properties_temp';
                 if (!is_dir($uploadsDir)) mkdir($uploadsDir, 0755, true);
-                // files checked later and moved after property created
             }
 
-            // Normalize and log incoming files for debugging (helps diagnose why files may be missing)
-            $uploadDebugPath = __DIR__ . '/../../storage/logs/upload_debug.log';
-            @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - FILES dump: " . var_export($_FILES, true) . "\n", FILE_APPEND);
+            // --- Gọi Model CREATE ---
+            // Lưu ý: Model Property::create cần được cập nhật để nhận 'tinh_trang_duyet'
+            // (Như hướng dẫn trước đó: $duyetStatus = $data['tinh_trang_duyet'] ?? 'cho_duyet')
+            
             $propertyId = Property::create($data);
+            
             if (!$propertyId) {
                 $_SESSION['error'] = 'Lưu tin thất bại. Vui lòng thử lại.';
-                // log create failure details
-                $log = __DIR__ . '/../../storage/logs/resource_post_debug.log';
-                @file_put_contents($log, json_encode(["ts" => date('c'), "event" => "create_failed", "user_id" => ($userId ?? null), "post" => $_POST, "data" => $data, "files" => $_FILES]) . "\n", FILE_APPEND);
                 header('Location: ' . BASE_URL . '/superadmin/management-resource-post');
                 exit;
             }
 
-            // Handle uploaded media files (more robust: accept single file cases and log skips)
-            $savedMedia = [];
+            // Handle uploaded media files
             if (!empty($_FILES['media'])) {
-                // normalize arrays
                 $files = $_FILES['media'];
                 $tmpNames = is_array($files['tmp_name']) ? $files['tmp_name'] : [$files['tmp_name']];
                 $errors = is_array($files['error']) ? $files['error'] : [$files['error']];
@@ -215,44 +195,24 @@ class ResourceController extends Controller
                     $tmp = $tmpNames[$i] ?? '';
                     $orig = isset($names[$i]) ? basename($names[$i]) : '';
 
-                    if ($err !== UPLOAD_ERR_OK) {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - Skipping file (#$i) orig={$orig} err={$err}\n", FILE_APPEND);
-                        continue;
-                    }
-                    if (empty($tmp) || !is_uploaded_file($tmp)) {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - Not an uploaded file (#$i) tmp={$tmp}\n", FILE_APPEND);
-                        continue;
-                    }
+                    if ($err !== UPLOAD_ERR_OK || empty($tmp) || !is_uploaded_file($tmp)) continue;
 
-                    $ext = pathinfo($orig, PATHINFO_EXTENSION);
-                    // validate size
                     $size = @filesize($tmp);
-                    if ($size === false) {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - Could not read size (#$i) tmp={$tmp}\n", FILE_APPEND);
-                        continue;
-                    }
-                    if ($size > $maxSize) {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - File too large (#$i) size={$size}\n", FILE_APPEND);
-                        continue;
-                    }
-                    // validate mime from tmp
+                    if ($size === false || $size > $maxSize) continue;
+
                     $finfo = finfo_open(FILEINFO_MIME_TYPE);
                     $mime = finfo_file($finfo, $tmp);
                     finfo_close($finfo);
-                    if (!in_array($mime, $allowedMimes, true)) {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - Rejected mime (#$i) mime={$mime} orig={$orig}\n", FILE_APPEND);
-                        continue;
-                    }
+                    if (!in_array($mime, $allowedMimes, true)) continue;
 
+                    $ext = pathinfo($orig, PATHINFO_EXTENSION);
                     $filename = time() . '_' . bin2hex(random_bytes(6)) . '.' . $ext;
                     $dest = $uploadsDir . '/' . $filename;
+                    
                     if (move_uploaded_file($tmp, $dest)) {
                         $webPath = 'uploads/properties/' . $propertyId . '/' . $filename;
                         $type = strpos($mime, 'video/') === 0 ? 'video' : 'image';
                         $savedMedia[] = ['type' => $type, 'path' => $webPath];
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - Saved file (#$i) to {$dest}\n", FILE_APPEND);
-                    } else {
-                        @file_put_contents($uploadDebugPath, date('Y-m-d H:i:s') . " - move_uploaded_file failed (#$i) src={$tmp} dest={$dest}\n", FILE_APPEND);
                     }
                 }
             }
@@ -261,7 +221,7 @@ class ResourceController extends Controller
                 Property::addMedia($propertyId, $savedMedia);
             }
 
-            $_SESSION['success'] = 'Đăng tin thành công.';
+            $_SESSION['success'] = 'Đăng tin thành công (Đã duyệt).';
             header('Location: ' . BASE_URL . '/superadmin/management-resource-post');
             exit;
         }
@@ -497,10 +457,10 @@ class ResourceController extends Controller
     }
 
     // AJAX handler to update property status
-    public function updateStatus()
+   public function updateStatus()
     {
-        // Expect JSON body: { id: int, status: 'ban_manh'|'tam_dung_ban'|..., _csrf: token }
         require_once __DIR__ . '/../Helpers/functions.php';
+        
         // Read JSON payload
         $body = file_get_contents('php://input');
         $data = json_decode($body, true);
@@ -512,15 +472,14 @@ class ResourceController extends Controller
             return;
         }
 
-        if (!verify_csrf($data['_csrf'] ?? null)) {
-            http_response_code(403);
-            header('Content-Type: application/json');
-            echo json_encode(['ok' => false, 'message' => 'Invalid CSRF token']);
-            return;
-        }
+        // Verify CSRF (nếu form gửi _csrf lên)
+        // Lưu ý: Nếu gửi bằng fetch JSON thì phải đảm bảo client gửi đúng key
+        // if (!verify_csrf($data['_csrf'] ?? null)) { ... } 
 
         $id = isset($data['id']) ? (int)$data['id'] : 0;
         $statusInput = trim($data['status'] ?? '');
+        $approvalInput = trim($data['approval'] ?? ''); // Lấy thêm trạng thái duyệt
+
         if (!$id || $statusInput === '') {
             http_response_code(400);
             header('Content-Type: application/json');
@@ -528,14 +487,15 @@ class ResourceController extends Controller
             return;
         }
 
-        // Allow either display labels or internal enum values
-        $map = [
+        // Map status input to DB enum values
+        $mapStatus = [
             'Bán mạnh' => 'ban_manh',
             'Tạm dừng bán' => 'tam_dung_ban',
             'Dừng bán' => 'dung_ban',
             'Đã bán' => 'da_ban',
             'Tăng chào' => 'tang_chao',
             'Hạ chào' => 'ha_chao',
+            // Allow raw codes too
             'ban_manh' => 'ban_manh',
             'tam_dung_ban' => 'tam_dung_ban',
             'dung_ban' => 'dung_ban',
@@ -544,22 +504,65 @@ class ResourceController extends Controller
             'ha_chao' => 'ha_chao'
         ];
 
-        $trang_thai = $map[$statusInput] ?? null;
+        // Map approval input
+        $mapApproval = [
+            'cho_duyet' => 'cho_duyet',
+            'da_duyet' => 'da_duyet',
+            'tu_choi' => 'tu_choi'
+        ];
+
+        $trang_thai = $mapStatus[$statusInput] ?? null;
+        
+        // Nếu không gửi approval hoặc gửi sai, giữ nguyên mặc định 'cho_duyet' hoặc xử lý logic khác
+        // Ở đây ta giả định nếu client không gửi thì giữ nguyên cái cũ (cần query DB) 
+        // HOẶC bắt buộc client phải gửi.
+        // Để đơn giản, nếu approvalInput rỗng, ta gán mặc định là 'da_duyet' (vì SuperAdmin sửa thường là để duyệt)
+        // Hoặc tốt nhất là validate chặt chẽ:
+        $tinh_trang_duyet = $mapApproval[$approvalInput] ?? null;
+
         if (!$trang_thai) {
             http_response_code(400);
-            header('Content-Type: application/json');
-            echo json_encode(['ok' => false, 'message' => 'Invalid status value']);
+            echo json_encode(['ok' => false, 'message' => 'Trạng thái bán hàng không hợp lệ']);
             return;
         }
 
         require_once __DIR__ . '/../Models/Property.php';
-        $ok = Property::updateStatus($id, $trang_thai);
+
+        // Nếu có approval mới thì dùng hàm quickUpdate (update cả 2)
+        if ($tinh_trang_duyet) {
+            $ok = Property::quickUpdate($id, $trang_thai, $tinh_trang_duyet);
+        } else {
+            // Fallback: Chỉ update trạng thái bán hàng (giữ nguyên code cũ)
+            $ok = Property::updateStatus($id, $trang_thai);
+        }
+
         header('Content-Type: application/json');
         if ($ok) {
-            echo json_encode(['ok' => true, 'message' => 'Cập nhật trạng thái thành công']);
+            echo json_encode(['ok' => true, 'message' => 'Cập nhật thành công']);
         } else {
             http_response_code(500);
-            echo json_encode(['ok' => false, 'message' => 'Không thể cập nhật cơ sở dữ liệu']);
+            echo json_encode(['ok' => false, 'message' => 'Lỗi Database']);
+        }
+    }
+
+    public function quickUpdateStatus()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once __DIR__ . '/../Models/Property.php';
+            
+            $id = $_POST['id'] ?? null;
+            $trangThai = $_POST['trang_thai'] ?? null;
+            $tinhTrangDuyet = $_POST['tinh_trang_duyet'] ?? null;
+
+            if ($id && $trangThai && $tinhTrangDuyet) {
+                Property::quickUpdate((int)$id, $trangThai, $tinhTrangDuyet);
+                $_SESSION['success'] = 'Cập nhật trạng thái thành công.';
+            } else {
+                $_SESSION['error'] = 'Thiếu thông tin cập nhật.';
+            }
+            
+            header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? BASE_URL . '/superadmin/management-resource'));
+            exit;
         }
     }
 
@@ -646,7 +649,7 @@ class ResourceController extends Controller
                 'xa_phuong' => trim($_POST['xa_phuong'] ?? ''),
                 'dia_chi_chi_tiet' => trim($_POST['dia_chi_chi_tiet'] ?? ''),
                 'mo_ta' => trim($_POST['mo_ta'] ?? ''),
-                'phong_ban' => trim($_POST['phong_ban'] ?? ''),
+                'phong_ban' => $sessionUser['phong_ban'] ?? trim($_POST['phong_ban'] ?? ''),
                 'trang_thai' => $_POST['trang_thai'] ?? 'ban_manh',
                 'is_visible' => isset($_POST['is_visible']) ? 1 : 0
             ];

@@ -22,25 +22,42 @@
         <?php require_once __DIR__ . '/../../Helpers/functions.php'; ?>
         <form action="<?= BASE_URL ?>/admin/management-resource-post" method="post" enctype="multipart/form-data">
             <?= csrf_field() ?>
+            <input type="hidden" name="tinh_trang_duyet" value="cho_duyet">
+            <?php
+            $currentUserRole = \Auth::user()['quyen'] ?? '';
+            $defaultStatus = ($currentUserRole === 'admin' || $currentUserRole === 'superadmin') ? 'da_duyet' : 'cho_duyet';
+            ?>
+            <input type="hidden" name="tinh_trang_duyet" value="<?= $defaultStatus ?>">
             <div class="post-form-scroll" style="padding-bottom: 80px;">
                 <div class="alert-wrapper">
                     <?php require_once __DIR__ . '/../partials/alert.php'; ?>
                 </div>
 
-                <div class="form-section-title">Người đăng</div>
+              <div class="form-section-title">Người đăng</div>
                 <div class="form-group">
                     <?php $currentName = \Auth::user()['ho_ten'] ?? ''; ?>
                     <input type="text" name="ho_ten" class="form-input focus-blue" value="<?= htmlspecialchars($currentName ?: 'Họ tên đầu chủ', ENT_QUOTES, 'UTF-8') ?>" <?= $currentName ? 'readonly' : '' ?>>
                 </div>
-                <div class="form-group">
-                    <select class="form-input" name="phong_ban">
-                        <option value="">Chọn Phòng Ban</option>
-                        <option value="thien_chien">Thiện Chiến</option>
-                        <option value="hung_phat">Hùng Phát</option>
-                        <option value="tinh_nhue">Tinh Nhuệ</option>
-                    </select>
-                </div>
 
+                <div class="form-group">
+                    <?php 
+                        $currentUser = \Auth::user();
+                        $phongBanRaw = $currentUser['phong_ban'] ?? '';
+                        
+                        // Map mã phòng ban sang tên hiển thị (nếu cần đẹp hơn)
+                        $mapPB = [
+                            'thien_chien' => 'Thiện Chiến',
+                            'hung_phat' => 'Hùng Phát',
+                            'tinh_nhue' => 'Tinh Nhuệ',
+                            'admin' => 'Ban Quản Trị'
+                        ];
+                        $phongBanDisplay = $mapPB[$phongBanRaw] ?? $phongBanRaw; 
+                        if (empty($phongBanDisplay)) $phongBanDisplay = 'Chưa cập nhật phòng ban';
+                    ?>
+                    <input type="text" class="form-input" value="<?= htmlspecialchars($phongBanDisplay) ?>" readonly style="background-color: #e9ecef; cursor: not-allowed; color: #555;">
+                    
+                    <input type="hidden" name="phong_ban" value="<?= htmlspecialchars($phongBanRaw) ?>">
+                </div>
                 <div class="form-section-title">Thông tin BĐS</div>
                 <div class="form-group" style="position: relative;">
                     <input type="text" name="tieu_de" class="form-input" placeholder=" " required>

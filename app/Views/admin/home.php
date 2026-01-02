@@ -17,6 +17,9 @@
             -webkit-overflow-scrolling: touch;
             scroll-snap-type: x mandatory;
         }
+        img.avatar {
+            object-fit:cover;
+        }
 
         .news-card {
             flex: 0 0 320px;

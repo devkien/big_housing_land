@@ -8,99 +8,47 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/style.css">
     <script src="<?= BASE_URL ?>/public/js/script.js"></script>
-    <script>
-        // Mock CKEditor để tránh lỗi trong script.js vì trang này không cần bộ soạn thảo
-        window.ClassicEditor = {
-            create: function() {
-                // Trả về Promise không bao giờ resolve để script.js không làm gì tiếp theo
-                return new Promise(() => {});
-            }
-        };
-    </script>
 </head>
 
 <body>
     <div class="app-container" style="background: white;">
 
         <header class="detail-header">
-            <a href="<?= BASE_URL ?>/admin/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <a href="<?= BASE_URL ?>/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
             <div class="detail-title">Chi tiết</div>
             <div class="header-icon-btn"></div>
         </header>
         <div class="feed-list" style="padding-bottom: 80px;">
 
             <?php if (!empty($property)):
-                // Xử lý giá
+                // --- DATA PREPARATION ---
                 $price = 'Thỏa thuận';
                 if (!empty($property['gia_chao'])) {
                     $val = (float)$property['gia_chao'];
-                    if ($val >= 1000000000) {
-                        $price = round($val / 1000000000, 2) . ' tỷ';
-                    } elseif ($val >= 1000000) {
-                        $price = round($val / 1000000, 0) . ' triệu';
-                    } else {
-                        $price = number_format($val, 0, ',', '.') . ' VND';
-                    }
+                    if ($val >= 1000000000) $price = round($val / 1000000000, 2) . ' tỷ';
+                    elseif ($val >= 1000000) $price = round($val / 1000000, 0) . ' triệu';
+                    else $price = number_format($val, 0, ',', '.') . ' VND';
                 }
-
-                // Xử lý diện tích
-                $area = '';
-                if (!empty($property['dien_tich'])) {
-                    $area = $property['dien_tich'] . ' ' . ($property['don_vi_dien_tich'] ?? 'm²');
-                }
-
-                // Giá trên m2
                 $pricePerM2 = '';
                 if (!empty($property['gia_chao']) && !empty($property['dien_tich']) && $property['dien_tich'] > 0) {
                     $ppm2 = $property['gia_chao'] / $property['dien_tich'];
-                    if ($ppm2 >= 1000000) {
-                        $pricePerM2 = round($ppm2 / 1000000, 1) . ' tr/m²';
-                    } else {
-                        $pricePerM2 = number_format($ppm2, 0, ',', '.') . '/m²';
-                    }
+                    if ($ppm2 >= 1000000) $pricePerM2 = round($ppm2 / 1000000, 1) . ' tr/m²';
+                    else $pricePerM2 = number_format($ppm2, 0, ',', '.') . '/m²';
                 }
-
-                // Trạng thái
-                $statusMap = [
-                    'ban_manh' => 'Bán mạnh',
-                    'tam_dung_ban' => 'Tạm dừng',
-                    'dung_ban' => 'Dừng bán',
-                    'da_ban' => 'Đã bán',
-                    'tang_chao' => 'Tăng chào',
-                    'ha_chao' => 'Hạ chào'
-                ];
+                $statusMap = ['ban_manh' => 'Bán mạnh', 'tam_dung_ban' => 'Tạm dừng', 'dung_ban' => 'Dừng bán', 'da_ban' => 'Đã bán', 'tang_chao' => 'Tăng chào', 'ha_chao' => 'Hạ chào'];
                 $statusLabel = $statusMap[$property['trang_thai'] ?? ''] ?? 'Đang bán';
-
-                // User info
-                $userName = $property['user_name'] ?? '---';
-                // phone may be stored under different keys in DB
-                $userPhoneRaw = $property['user_phone'] ?? $property['so_dien_thoai'] ?? $property['phone'] ?? $property['sdt'] ?? '';
-                $userPhone = trim($userPhoneRaw);
-                $phoneDigits = $userPhone ? preg_replace('/[^0-9+]/', '', $userPhone) : '';
+                $userName = $property['ho_ten'] ?? '---';
+                $userPhoneRaw = $property['user_phone'] ?? $property['so_dien_thoai'] ?? '';
+                $phoneDigits = $userPhoneRaw ? preg_replace('/[^0-9+]/', '', $userPhoneRaw) : '';
                 $phoneHref = $phoneDigits ? 'tel:' . $phoneDigits : '#';
-                // zalo uses zalo.me/<phone>
                 $zaloHref = $phoneDigits ? 'https://zalo.me/' . ltrim($phoneDigits, '+') : '#';
-                // messenger / facebook link
-                $linkFbRaw = $property['link_fb'] ?? $property['linkfb'] ?? $property['facebook_link'] ?? '';
-                $linkFb = '';
+                $linkFbRaw = $property['link_fb'] ?? '';
+                $linkFb = '#';
                 if (!empty($linkFbRaw)) {
                     $linkFb = $linkFbRaw;
-                    if (!preg_match('#^https?://#i', $linkFb)) {
-                        $linkFb = 'https://facebook.com/' . ltrim($linkFb, '/');
-                    }
-                } else {
-                    $linkFb = '#';
+                    if (!preg_match('#^https?://#i', $linkFb)) $linkFb = 'https://facebook.com/' . ltrim($linkFb, '/');
                 }
-                $userAvatar = !empty($property['user_avatar']) ? BASE_URL . '/' . $property['user_avatar'] : BASE_URL . '/icon/menuanhdaidien.png';
-
-                // Tags
-                $tags = [];
-                if (!empty($property['loai_bds'])) $tags[] = $property['loai_bds'] == 'nha_pho' ? 'Nhà phố' : 'Đất nền';
-                if (!empty($property['phap_ly'])) $tags[] = $property['phap_ly'] == 'co_so' ? 'Có sổ' : 'Không sổ';
-
-                // Address parts for tags or display
-                $addrParts = array_filter([$property['xa_phuong'] ?? '', $property['quan_huyen'] ?? '', $property['tinh_thanh'] ?? '']);
-                $shortAddr = implode(', ', $addrParts);
+                $userAvatar = !empty($property['avatar']) ? BASE_URL . '/' . ltrim($property['avatar'], '/') : BASE_URL . '/icon/menuanhdaidien.png';
             ?>
                 <article class="post-card">
                     <div class="user-row">
@@ -109,15 +57,9 @@
                             <div class="user-info">
                                 <div class="user-name"><?= htmlspecialchars($userName) ?> <span style="font-weight:normal; font-size: 13px; color: #666;">- <?= htmlspecialchars($property['phong_ban'] ?? '') ?></span></div>
                                 <div class="rating-stars">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                                     <?php if (!empty($property['created_at'])): ?>
-                                        <span style="color: #666; font-size: 12px; margin-left: 8px;">
-                                            <?= date('d/m/Y', strtotime($property['created_at'])) ?>
-                                        </span>
+                                        <span style="color: #666; font-size: 12px; margin-left: 8px;"><?= date('d/m/Y', strtotime($property['created_at'])) ?></span>
                                     <?php endif; ?>
                                     <div class="contact-icons">
                                         <a href="<?= htmlspecialchars($phoneHref) ?>" style="color: inherit; margin-right: 10px;"><i class="fa-solid fa-phone c-icon icon-phone"></i></a>
@@ -132,14 +74,6 @@
 
                     <div class="price-tag-row">
                         <div class="price-text"><?= $price ?> <?= $pricePerM2 ? '- ' . $pricePerM2 : '' ?></div>
-                        <div class="tags-group">
-                            <?php foreach ($tags as $tag): ?>
-                                <span class="tag-gray"><?= htmlspecialchars($tag) ?></span>
-                            <?php endforeach; ?>
-                            <?php if ($shortAddr): ?>
-                                <span class="tag-gray"><?= htmlspecialchars($shortAddr) ?></span>
-                            <?php endif; ?>
-                        </div>
                     </div>
 
                     <div class="specs-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; background: #f9f9f9; padding: 10px; border-radius: 8px; font-size: 14px;">
@@ -147,21 +81,69 @@
                         <div><i class="fa-solid fa-arrows-left-right" style="color: #666; width: 20px;"></i> <strong>Mặt tiền:</strong> <?= htmlspecialchars($property['chieu_rong'] ?? '') ?> m</div>
                         <div><i class="fa-solid fa-arrows-up-down" style="color: #666; width: 20px;"></i> <strong>Chiều dài:</strong> <?= htmlspecialchars($property['chieu_dai'] ?? '') ?> m</div>
                         <div><i class="fa-solid fa-layer-group" style="color: #666; width: 20px;"></i> <strong>Số tầng:</strong> <?= htmlspecialchars($property['so_tang'] ?? '') ?></div>
+                        <?php if (!empty($property['huong'])): ?>
+                            <div><i class="fa-regular fa-compass" style="color: #666; width: 20px;"></i> <strong>Hướng:</strong> <?= htmlspecialchars($property['huong']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['duong_vao'])): ?>
+                            <div><i class="fa-solid fa-road" style="color: #666; width: 20px;"></i> <strong>Đường vào:</strong> <?= htmlspecialchars($property['duong_vao']) ?> m</div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['so_phong_ngu'])): ?>
+                            <div><i class="fa-solid fa-bed" style="color: #666; width: 20px;"></i> <strong>PN:</strong> <?= htmlspecialchars($property['so_phong_ngu']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['so_nha_ve_sinh'])): ?>
+                            <div><i class="fa-solid fa-bath" style="color: #666; width: 20px;"></i> <strong>WC:</strong> <?= htmlspecialchars($property['so_nha_ve_sinh']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['ten_chu_nha'])): ?>
+                            <div><i class="fa-solid fa-user-tie" style="color: #666; width: 20px;"></i> <strong>Chủ nhà:</strong> <?= htmlspecialchars($property['ten_chu_nha']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['so_dien_thoai_chu_nha'])): ?>
+                            <div><i class="fa-solid fa-phone" style="color: #666; width: 20px;"></i> <strong>SĐT Chủ:</strong> <?= htmlspecialchars($property['so_dien_thoai_chu_nha']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['anh_chu_nha'])): ?>
+                            <div style="grid-column: span 2;">
+                                <i class="fa-solid fa-image-portrait" style="color: #666; width: 20px;"></i> <strong>Ảnh chủ nhà:</strong><br>
+                                <img src="<?= BASE_URL . '/' . ltrim($property['anh_chu_nha'], '/') ?>" style="max-width: 100%; max-height: 300px; margin-top: 5px; border-radius: 5px;">
+                            </div>
+                        <?php endif; ?>
                         <div><i class="fa-solid fa-file-contract" style="color: #666; width: 20px;"></i> <strong>Pháp lý:</strong> <?= ($property['phap_ly'] ?? '') === 'co_so' ? 'Sổ đỏ/Sổ hồng' : 'Chưa có sổ' ?></div>
                         <?php if (!empty($property['ma_so_so'])): ?>
                             <div><i class="fa-solid fa-barcode" style="color: #666; width: 20px;"></i> <strong>Mã sổ:</strong> <?= htmlspecialchars($property['ma_so_so']) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($property['anh_so'])): ?>
+                            <div style="grid-column: span 2;">
+                                <i class="fa-solid fa-file-image" style="color: #666; width: 20px;"></i> <strong>Ảnh sổ:</strong><br>
+                                <img src="<?= BASE_URL . '/' . ltrim($property['anh_so'], '/') ?>" style="max-width: 100%; max-height: 300px; margin-top: 5px; border-radius: 5px;">
+                            </div>
                         <?php endif; ?>
                         <?php if (!empty($property['trich_thuong_gia_tri'])): ?>
                             <div><i class="fa-solid fa-gift" style="color: #666; width: 20px;"></i> <strong>Trích thưởng:</strong> <?= htmlspecialchars($property['trich_thuong_gia_tri']) ?> <?= htmlspecialchars($property['trich_thuong_don_vi'] ?? '') ?></div>
                         <?php endif; ?>
                     </div>
 
-                    <?php if (!empty($property['dia_chi_chi_tiet'])): ?>
+                    <?php
+                        $addrParts = [];
+                        if (!empty($property['dia_chi_chi_tiet'])) {
+                            $addrParts[] = $property['dia_chi_chi_tiet'];
+                        }
+                        if (!empty($property['xa_phuong'])) {
+                            $addrParts[] = $property['xa_phuong'];
+                        }
+                        if (!empty($property['quan_huyen'])) {
+                            $addrParts[] = $property['quan_huyen'];
+                        }
+                        if (!empty($property['tinh_thanh'])) {
+                            $addrParts[] = $property['tinh_thanh'];
+                        }
+                        
+                        $fullAddress = implode(', ', $addrParts);
+                    ?>
+                    
+                    <?php if (!empty($fullAddress)): ?>
                         <div style="margin-top: 10px; font-size: 14px; color: #333; padding: 0 5px;">
-                            <i class="fa-solid fa-location-dot" style="color: #666; width: 20px;"></i> <strong>Địa chỉ chi tiết:</strong> <?= htmlspecialchars($property['dia_chi_chi_tiet']) ?>
+                            <i class="fa-solid fa-location-dot" style="color: #666; width: 20px;"></i> 
+                            <strong>Địa chỉ chi tiết:</strong> <?= htmlspecialchars($fullAddress) ?>
                         </div>
                     <?php endif; ?>
-
                     <div class="post-content">
                         <strong><?= htmlspecialchars($property['tieu_de'] ?? '') ?></strong>
                         <div class="auto-truncate-text">

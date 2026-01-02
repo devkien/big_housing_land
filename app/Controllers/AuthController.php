@@ -419,7 +419,6 @@ class AuthController extends Controller
             <p>Mật khẩu mới của bạn là: <b style='font-size: 20px; color: red;'>$newPasswordRaw</b></p>
             <p>Vui lòng đăng nhập và đổi lại mật khẩu ngay để bảo mật tài khoản.</p>
             <hr>
-            <a href='" . BASE_URL . "/login'>Bấm vào đây để đăng nhập</a>
         ";
 
         $sent = $this->sendMailSMTP($email, $user['ho_ten'], $subject, $body);
