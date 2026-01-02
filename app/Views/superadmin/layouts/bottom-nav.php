@@ -1,15 +1,15 @@
 <nav class="bottom-nav">
     <a href="<?= BASE_URL ?>/superadmin/home" class="nav-item" id="nav-home">
-        <img src="<?= BASE_URL ?>/icon/nhanhanha.png" alt="">
+        <img src="<?= BASE_URL ?>/icon/trangchu.svg" alt="">
     </a>
     <a href="<?= BASE_URL ?>/superadmin/collection" class="nav-item" id="nav-collection">
-        <img src="<?= BASE_URL ?>/icon/menubosuutam.png" alt="">
+        <img src="<?= BASE_URL ?>/icon/bosuutap.svg" alt="">
     </a>
     <a href="<?= BASE_URL ?>/superadmin/info" id="nav-info">
-        <img src="<?= BASE_URL ?>/icon/menuthongtin.png" alt="">
+        <img src="<?= BASE_URL ?>/icon/thongtin.svg" alt="">
     </a>
     <a href="<?= BASE_URL ?>/superadmin/notification" class="nav-item" id="nav-notify">
-        <img src="<?= BASE_URL ?>/icon/menuthongbao.png" alt="">
+        <img src="<?= BASE_URL ?>/icon/thongbao.svg" alt="">
     </a>
     <?php
     if (session_status() === PHP_SESSION_NONE) @session_start();
