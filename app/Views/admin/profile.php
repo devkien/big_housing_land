@@ -7,10 +7,11 @@
     <title>Danh mục tài khoản</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL ?>/public/css/style.css">
-    
+
     <style>
         .custom-modal-overlay {
-            display: none; /* Mặc định ẩn */
+            display: none;
+            /* Mặc định ẩn */
             position: fixed;
             top: 0;
             left: 0;
@@ -29,12 +30,13 @@
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         .custom-modal-title {
-            color: #355C9C; /* Màu xanh giống trong ảnh */
+            color: #355C9C;
+            /* Màu xanh giống trong ảnh */
             font-size: 17px;
             font-weight: 700;
             margin-bottom: 10px;
@@ -63,16 +65,18 @@
         }
 
         .btn-agree {
-            background-color: #3b5998; /* Màu xanh đậm */
+            background-color: #3b5998;
+            /* Màu xanh đậm */
             color: white;
         }
 
         .btn-cancel-custom {
             background-color: white;
-            color: #d32f2f; /* Màu đỏ */
+            color: #d32f2f;
+            /* Màu đỏ */
             border: 1px solid #d32f2f;
         }
-        
+
         .btn-cancel-custom:active {
             background-color: #fce8e8;
         }
@@ -100,7 +104,7 @@
             <img src="<?= htmlspecialchars($avatarSrc, ENT_QUOTES, 'UTF-8') ?>" class="profile-avatar-large" onerror="this.onerror=null;this.src='<?= rtrim(BASE_URL, '/') ?>/icon/menuanhdaidien.png';">
             <div class="profile-info">
                 <h3><?php echo isset($user['ho_ten']) ? htmlspecialchars($user['ho_ten'], ENT_QUOTES, 'UTF-8') : '---'; ?></h3>
-                <div class="profile-role">Cấp quản lý</div>
+                <div class="profile-role">Cấp đầu chủ</div>
                 <div class="office-badge">TRỤ SỞ - HÀ NỘI</div>
             </div>
             <i class="fa-solid fa-chevron-right arrow-right-absolute"></i>

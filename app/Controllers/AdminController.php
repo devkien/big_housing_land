@@ -152,6 +152,17 @@ class AdminController extends Controller
                 exit;
             }
 
+            // Validate CCCD uniqueness if provided
+            if (!empty($data['so_cccd'])) {
+                $existingCccd = User::findByCCCD($data['so_cccd']);
+                // findByCCCD may return an array or false
+                if ($existingCccd && !empty($existingCccd['id']) && $existingCccd['id'] != $id) {
+                    $_SESSION['error'] = 'Số CCCD đã được sử dụng bởi tài khoản khác';
+                    header('Location: ' . BASE_URL . '/admin/editprofile?id=' . $id);
+                    exit;
+                }
+            }
+
             // Handle avatar upload (admin may update avatar for the target user)
             $avatarSavedPath = null;
             if (!empty($_FILES['avatar']) && isset($_FILES['avatar']['error']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
