@@ -40,7 +40,7 @@
             <div class="avatar-upload-wrapper" style="display:inline-block;position:relative;">
                 <img id="currentAvatar" src="<?php echo htmlspecialchars($avatarSrc, ENT_QUOTES, 'UTF-8'); ?>" class="profile-avatar-large" style="cursor:pointer;" onerror="this.onerror=null;this.src='<?= rtrim(BASE_URL, '/') ?>/icon/menuanhdaidien.png';">
                 <div class="avatar-overlay" style="position:absolute;bottom:4px;left:43%;transform:translateX(-50%);pointer-events:none;">
-                    <img src="<?php echo htmlspecialchars(rtrim(BASE_URL, '/') . '/public/icon/Vector.svg', ENT_QUOTES, 'UTF-8'); ?>" alt="avatar-icon" style="width:36px;height:36px;display:block;object-fit:contain;">
+                    <img src="<?php echo htmlspecialchars(rtrim(BASE_URL, '/') . '/public/icon/upload.svg', ENT_QUOTES, 'UTF-8'); ?>" alt="avatar-icon" style="width:36px;height:36px;display:block;object-fit:contain;">
                 </div>
             </div>
             <div class="profile-info">

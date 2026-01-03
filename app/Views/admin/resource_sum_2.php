@@ -36,8 +36,8 @@
             <div class="header-icon-btn"></div>
         </header>
         <div class="tabs-container">
-            <button class="tab-btn active">Kho nhà đất</button>
-            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/admin/management-resource-sum2'">Kho nhà cho thuê</button>
+            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/admin/management-resource-sum'">Kho nhà đất</button>
+            <button class="tab-btn active">Kho nhà cho thuê</button>
         </div>
         <div class="toolbar-section">
             <button class="tool-btn" id="btn-filter"><i class="fa-solid fa-filter"></i> Lọc</button>
@@ -135,7 +135,7 @@
                             ?>
                             <tr data-id="<?= htmlspecialchars($p['id']) ?>">
                                 <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
-                                
+
                                 <td style="padding-left:15px;">
                                     <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
                                 </td>
