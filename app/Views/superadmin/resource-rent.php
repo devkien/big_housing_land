@@ -35,8 +35,8 @@
         </header>
 
         <div class="tabs-container">
-            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource'">Kho nhà đất</button>
-            <button class="tab-btn active">Kho nhà cho thuê</button>
+            <button class="tab-btn active">Kho nhà đất</button>
+            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-rent'">Kho nhà cho thuê</button>
         </div>
 
         <div class="toolbar-section">
@@ -49,19 +49,13 @@
                 <thead>
                     <tr>
                         <th style="padding-left:15px; width: 60px;">LƯU</th>
-
                         <th style="width: 100px; text-align: center;">HÀNH ĐỘNG</th>
-
                         <th style="width: 120px; text-align: center;">SỬA</th>
-
                         <th style="width: 100px; text-align: center;">XÉT DUYỆT</th>
-
                         <th style="width: 100px;">THỜI GIAN</th>
-
                         <th style="width: 240px;">TIÊU ĐỀ</th>
-
-                        <th style="width: 100px;">LOẠI BĐS</th>
-                        <th style="width: 100px;">LOẠI KHO</th>
+                        <th style="width:120px;">HIỆN TRẠNG</th>
+                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
                         <th style="width: 80px;">CÓ SỔ</th>
                         <th style="width: 120px;">MÃ SỔ</th>
                         <th style="width:100px;">DIỆN TÍCH</th>
@@ -70,9 +64,8 @@
                         <th style="width:90px">CHIỀU RỘNG</th>
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
-
-                        <th style="width:120px;">HIỆN TRẠNG</th>
-                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+                        <th style="width: 100px;">LOẠI BĐS</th>
+                        <th style="width: 100px;">LOẠI KHO</th>
                         <th style="width: 120px;">MÃ HIỂN THỊ</th>
                         <th style="width: 100px;">PHÒNG BAN</th>
                     </tr>
@@ -88,17 +81,19 @@
                         'ha_chao' => 'Hạ chào'
                     ];
 
-                    // Map trạng thái xét duyệt
                     $approvalMap = [
-                        'cho_duyet' => ['label' => 'Chờ duyệt', 'color' => '#f0ad4e'], // Màu cam
-                        'da_duyet'  => ['label' => 'Đã duyệt',  'color' => '#28a745'], // Màu xanh lá
-                        'tu_choi'   => ['label' => 'Từ chối',   'color' => '#dc3545']  // Màu đỏ
+                        'cho_duyet' => ['label' => 'Chờ duyệt', 'color' => '#f0ad4e'],
+                        'da_duyet'  => ['label' => 'Đã duyệt',  'color' => '#28a745'],
+                        'tu_choi'   => ['label' => 'Từ chối',   'color' => '#dc3545']
                     ];
+
+                    // Lấy giá trị lọc từ URL
+                    $filterApproval = $_GET['approval'] ?? '';
 
                     if (empty($properties)) :
                     ?>
                         <tr>
-                            <td colspan="21" style="text-align:center; padding:20px;">Không tìm thấy tài nguyên nào.</td>
+                            <td colspan="20" style="text-align:center; padding:20px;">Không tìm thấy tài nguyên nào.</td>
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
@@ -107,9 +102,22 @@
                             $postUserId = $p['user_id'] ?? 0;
                             $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
 
+                            // --- LOGIC LỌC MỚI (QUAN TRỌNG) ---
+                            // Nếu có chọn bộ lọc xét duyệt và giá trị không phải 'all'
+                            // thì kiểm tra xem tin này có khớp không. Nếu không khớp -> Bỏ qua.
+                            if (!empty($filterApproval) && $filterApproval !== 'all') {
+                                if ($approvalStatus !== $filterApproval) {
+                                    continue; 
+                                }
+                            }
+
+                            // Logic cũ: Ẩn tin chưa duyệt của người khác (trừ khi là admin/superadmin đã xử lý ở backend)
+                            // Đoạn này giữ nguyên để đảm bảo user thường không thấy tin chưa duyệt của người khác
+                            // Nhưng nó chạy SAU khi đã lọc theo yêu cầu của user ở trên.
                             if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
                                 continue;
                             }
+                            
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
                             
@@ -181,12 +189,13 @@
 
                                 <td><?= $created ?></td>
 
-                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/super/management-resource-detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-detail?id=<?= htmlspecialchars($p['id']) ?>'">
                                     <?= $tieu_de ?>
                                 </td>
 
-                                <td><?= htmlspecialchars($loai_bds) ?></td>
-                                <td><?= htmlspecialchars($loai_kho) ?></td>
+                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+                                <td style="text-align:right; padding-right:15px; font-weight: 500; color: #333;"><?= $address ?></td>
+
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
                                 <td><?= $ma_so_so ?></td>
                                 <td><?= $dien_tich !== null ? rtrim(rtrim(number_format($dien_tich, 2, ',', '.'), '0'), ',') : '' ?></td>
@@ -196,12 +205,10 @@
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px; color: #d32f2f; font-weight: bold;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
 
-                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
-
-                                <td style="text-align:right; padding-right:15px; font-weight: 500; color: #333;"><?= $address ?></td>
+                                <td><?= htmlspecialchars($loai_bds) ?></td>
+                                <td><?= htmlspecialchars($loai_kho) ?></td>
 
                                 <td style="color: #666;"><?= $code ?></td>
-
                                 <td style="color: #666;"><?= $phong_ban ?></td>
                             </tr>
                     <?php
@@ -217,6 +224,10 @@
             $queryParams = [];
             if (!empty($status)) $queryParams['status'] = $status;
             if (!empty($address)) $queryParams['address'] = $address;
+            
+            // --- THÊM DÒNG NÀY ĐỂ GIỮ LẠI THAM SỐ APPROVAL TRÊN URL KHI CHUYỂN TRANG ---
+            if (!empty($filterApproval)) $queryParams['approval'] = $filterApproval;
+            
             $queryString = http_build_query($queryParams);
             ?>
 
@@ -246,6 +257,17 @@
                         <option value="ha_chao" <?= (isset($status) && $status === 'ha_chao') ? 'selected' : '' ?>>Hạ chào</option>
                     </select>
                 </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">Trạng thái xét duyệt</label>
+                    <select id="filter-approval" class="filter-select">
+                        <option value="all" <?= (empty($filterApproval) || $filterApproval === 'all') ? 'selected' : '' ?>>Tất cả</option>
+                        <option value="da_duyet" <?= ($filterApproval === 'da_duyet') ? 'selected' : '' ?>>Đã duyệt</option>
+                        <option value="cho_duyet" <?= ($filterApproval === 'cho_duyet') ? 'selected' : '' ?>>Chờ duyệt</option>
+                        <option value="tu_choi" <?= ($filterApproval === 'tu_choi') ? 'selected' : '' ?>>Từ chối</option>
+                    </select>
+                </div>
+
                 <div class="filter-group">
                     <label class="filter-label">Mã tin / Địa chỉ</label>
                     <input type="text" id="filter-address" class="filter-input" placeholder="Nhập mã tin (VD: 1277)..." value="<?= htmlspecialchars($address ?? '') ?>">
@@ -424,10 +446,32 @@
                 applyFilter.addEventListener('click', function() {
                     var status = qs('#filter-status').value;
                     var address = qs('#filter-address').value;
-                    var url = new URL(window.BASE_URL + '/superadmin/management-resource-rent', window.location.origin);
+                    var approval = qs('#filter-approval').value; // Lấy giá trị lọc xét duyệt
+
+                    // Sử dụng window.location.href để lấy URL hiện tại
+                    // Thay vì dùng đường dẫn cứng '/superadmin/management-resource-rent'
+                    var url = new URL(window.location.href);
+                    
                     url.searchParams.set('page', '1');
-                    if (status && status !== 'all') url.searchParams.set('status', status);
-                    if (address) url.searchParams.set('address', address);
+                    
+                    if (status && status !== 'all') {
+                        url.searchParams.set('status', status);
+                    } else {
+                        url.searchParams.delete('status');
+                    }
+
+                    if (address) {
+                        url.searchParams.set('address', address);
+                    } else {
+                        url.searchParams.delete('address');
+                    }
+
+                    if (approval && approval !== 'all') {
+                        url.searchParams.set('approval', approval);
+                    } else {
+                        url.searchParams.delete('approval');
+                    }
+
                     window.location.href = url.toString();
                 });
             }

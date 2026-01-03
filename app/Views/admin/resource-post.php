@@ -143,18 +143,21 @@
                     </select>
                 </div>
                 <div class="form-section-title">Địa chỉ</div>
+                
                 <div class="form-group" style="position: relative;">
-                    <select id="select-province" name="tinh_thanh" class="form-input" required>
+                    <select id="select-province" class="form-input" required>
                         <option value="" disabled selected>-- Chọn Tỉnh / Thành --</option>
                     </select>
-
+                    <input type="hidden" name="tinh_thanh" id="input-tinh-thanh">
                 </div>
+
                 <div class="form-group" style="position: relative;">
-                    <select id="select-ward" name="xa_phuong" class="form-input">
+                    <select id="select-ward" class="form-input">
                         <option value="" disabled selected>-- Chọn Xã / Phường (nếu có) --</option>
                     </select>
-
+                    <input type="hidden" name="xa_phuong" id="input-xa-phuong">
                 </div>
+
                 <div class="form-group">
                     <input type="text" name="dia_chi_chi_tiet" class="form-input" placeholder="Số nhà, tên đường">
                 </div>
@@ -214,6 +217,10 @@
 
             const $prov = document.getElementById('select-province');
             const $ward = document.getElementById('select-ward');
+            
+            // Các input hidden để lưu Tên
+            const $inputProv = document.getElementById('input-tinh-thanh');
+            const $inputWard = document.getElementById('input-xa-phuong');
 
             function clearSelect(el, placeholder) {
                 el.innerHTML = '';
@@ -229,7 +236,9 @@
                 clearSelect($prov, '-- Chọn Tỉnh / Thành --');
                 Object.keys(data).forEach(slug => {
                     const opt = document.createElement('option');
+                    // Giữ value là slug/ID để logic tìm xã/phường hoạt động
                     opt.value = slug;
+                    // textContent là Tên hiển thị
                     opt.textContent = data[slug].name || slug;
                     $prov.appendChild(opt);
                 });
@@ -237,6 +246,9 @@
 
             function populateWards(data, provSlug) {
                 clearSelect($ward, '-- Chọn Xã / Phường (nếu có) --');
+                // Khi load lại xã, reset input tên xã
+                $inputWard.value = ''; 
+                
                 if (!provSlug || !data[provSlug]) return;
                 const districts = data[provSlug].districts || {};
                 const allWards = [];
@@ -269,9 +281,24 @@
                 }).catch(() => tryFetch(index + 1));
             }
 
+            // SỰ KIỆN CHỌN TỈNH
             $prov.addEventListener('change', function() {
-                const prov = this.value;
-                populateWards(window._locationsData || {}, prov);
+                const provSlug = this.value; // Lấy ID/Slug để tìm xã
+                
+                // Lấy TÊN hiển thị để lưu vào hidden input
+                const selectedOption = this.options[this.selectedIndex];
+                const provName = selectedOption.textContent;
+                $inputProv.value = provName;
+
+                populateWards(window._locationsData || {}, provSlug);
+            });
+
+            // SỰ KIỆN CHỌN XÃ (Thêm mới)
+            $ward.addEventListener('change', function() {
+                // Lấy TÊN hiển thị để lưu vào hidden input
+                const selectedOption = this.options[this.selectedIndex];
+                const wardName = selectedOption.textContent;
+                $inputWard.value = wardName;
             });
 
             // init

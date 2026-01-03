@@ -86,7 +86,7 @@
 
         <div class="profile-card-banner" onclick="window.location.href='<?= BASE_URL ?>/superadmin/detailprofile'">
             <?php
-            $avatarSrc = '../icon/menuanhdaidien.png';
+            $avatarSrc = rtrim(BASE_URL, '/') . '/icon/menuanhdaidien.png';
             if (!empty($user['avatar'])) {
                 $avatar = $user['avatar'];
                 if (strpos($avatar, 'http') === 0 || strpos($avatar, '/') === 0) {
@@ -96,7 +96,7 @@
                 }
             }
             ?>
-            <img src="<?= htmlspecialchars($avatarSrc, ENT_QUOTES, 'UTF-8') ?>" class="profile-avatar-large" onerror="this.onerror=null;this.src='../icon/menuanhdaidien.png';">
+            <img src="<?= htmlspecialchars($avatarSrc, ENT_QUOTES, 'UTF-8') ?>" class="profile-avatar-large" onerror="this.onerror=null;this.src='<?= rtrim(BASE_URL, '/') ?>/icon/menuanhdaidien.png';">
             <div class="profile-info">
                 <h3><?php echo isset($user['ho_ten']) ? htmlspecialchars($user['ho_ten'], ENT_QUOTES, 'UTF-8') : '---'; ?></h3>
                 <div class="profile-role">Cấp quản lý</div>
