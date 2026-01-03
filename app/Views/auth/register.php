@@ -101,13 +101,16 @@
                 <i class="arrow-right fa-solid fa-chevron-down"></i>
             </div>
 
-            <div class="reg-line-select">
+        <div class="reg-line-select">
                 <i class="icon-left fa-solid fa-fire"></i>
                 <select name="phong_ban" required>
                     <option value="" disabled <?= empty($old['phong_ban']) ? 'selected' : '' ?>>Chọn phòng ban</option>
-                    <option value="kd1" <?= ($old['phong_ban'] ?? '') === 'kd1' ? 'selected' : '' ?>>Thiện Chiến</option>
-                    <option value="kd2" <?= ($old['phong_ban'] ?? '') === 'kd2' ? 'selected' : '' ?>>Hùng Phát</option>
-                    <option value="kd3" <?= ($old['phong_ban'] ?? '') === 'kd3' ? 'selected' : '' ?>>Tinh Nhuệ</option>
+                    
+                    <option value="Thiện Chiến" <?= ($old['phong_ban'] ?? '') === 'Thiện Chiến' ? 'selected' : '' ?>>Thiện Chiến</option>
+                    
+                    <option value="Hùng Phát" <?= ($old['phong_ban'] ?? '') === 'Hùng Phát' ? 'selected' : '' ?>>Hùng Phát</option>
+                    
+                    <option value="Tinh Nhuệ" <?= ($old['phong_ban'] ?? '') === 'Tinh Nhuệ' ? 'selected' : '' ?>>Tinh Nhuệ</option>
                 </select>
                 <i class="arrow-right fa-solid fa-chevron-down"></i>
             </div>
@@ -138,168 +141,131 @@
 
         </form>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadBox = document.getElementById('upload-box-cccd');
-            const fileInput = document.getElementById('file-upload-cccd');
-            const previewContainer = document.getElementById('preview-container-cccd');
-            const previewImg = document.getElementById('preview-img-cccd');
-            const btnRemove = document.getElementById('btn-remove-img-cccd');
-            const iconCamera = document.getElementById('icon-camera-cccd');
-            const iconPlus = document.getElementById('icon-plus-cccd');
-            const hintText = uploadBox.querySelector('.upload-hint-text');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- 1. KHAI BÁO BIẾN DOM ---
+        const uploadBox = document.getElementById('upload-box-cccd');
+        const fileInput = document.getElementById('file-upload-cccd');
+        const previewContainer = document.getElementById('preview-container-cccd');
+        const previewImg = document.getElementById('preview-img-cccd');
+        const btnRemove = document.getElementById('btn-remove-img-cccd');
+        const iconCamera = document.getElementById('icon-camera-cccd');
+        const iconPlus = document.getElementById('icon-plus-cccd');
+        const hintText = uploadBox.querySelector('.upload-hint-text');
 
-            // Local persistence key
-            const FORM_KEY = 'bh_register_v1';
-            const form = document.querySelector('form[action="<?= BASE_URL ?>/register"]');
+        // Key lưu trữ LocalStorage
+        const FORM_KEY = 'bh_register_v1';
+        const form = document.querySelector('form[action="<?= BASE_URL ?>/register"]');
 
-            // If server set cookie to indicate successful registration, clear saved form
-            try {
-                const cookieParts = document.cookie.split(';').map(c => c.trim());
-                const clearCookie = cookieParts.find(c => c.indexOf('bh_clear_form=') === 0);
-                if (clearCookie) {
-                    clearSavedForm();
-                    // delete cookie
-                    document.cookie = 'bh_clear_form=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT';
-                }
-            } catch (e) {
-                // ignore
+        // --- 2. HÀM RESET ẢNH (Xóa sạch ảnh và đưa về trạng thái ban đầu) ---
+        function resetUploadState() {
+            // 1. Xóa giá trị file trong input
+            if (fileInput) fileInput.value = '';
+
+            // 2. Ẩn khung xem trước và xóa đường dẫn ảnh
+            if (previewContainer) {
+                previewContainer.style.display = 'none';
+            }
+            if (previewImg) {
+                previewImg.src = '';
+                previewImg.removeAttribute('src'); // Gỡ bỏ hoàn toàn src
             }
 
-            function saveFormToLocal() {
-                if (!form) return;
-                const data = {};
-                const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
-                elements.forEach(el => {
-                    const name = el.name;
-                    if (!name) return;
-                    if (el.type === 'password' || el.type === 'file') return; // do not persist password or file
-                    if (el.type === 'checkbox') {
-                        data[name] = el.checked;
-                    } else if (el.type === 'radio') {
-                        if (el.checked) data[name] = el.value;
-                    } else {
-                        data[name] = el.value;
-                    }
-                });
-                // also store preview image (base64) if available
-                if (previewImg && previewImg.src) {
-                    data._anh_cccd_preview = previewImg.src;
-                }
-                try {
-                    localStorage.setItem(FORM_KEY, JSON.stringify(data));
-                } catch (e) {
-                    /* ignore storage errors */
-                }
-            }
+            // 3. Hiển thị lại các icon Camera/Dấu cộng ban đầu
+            if (iconCamera) iconCamera.style.display = 'block';
+            if (iconPlus) iconPlus.style.display = 'block';
+            if (hintText) hintText.style.display = 'block';
+            if (uploadBox) uploadBox.style.backgroundColor = '#f2f6ff';
+        }
 
-            function restoreFormFromLocal() {
-                if (!form) return;
-                let data = null;
-                try {
-                    data = JSON.parse(localStorage.getItem(FORM_KEY));
-                } catch (e) {
-                    data = null;
+        // --- 3. CHỈ LƯU VĂN BẢN (Không lưu ảnh) ---
+        function saveFormToLocal() {
+            if (!form) return;
+            const data = {};
+            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
+            elements.forEach(el => {
+                // Bỏ qua input file và password
+                if (el.type === 'password' || el.type === 'file') return;
+                
+                // Chỉ lưu text, radio, checkbox
+                data[el.name] = (el.type === 'checkbox') ? el.checked : el.value;
+            });
+            // LƯU Ý: Đã xóa đoạn code lưu ảnh preview tại đây
+            localStorage.setItem(FORM_KEY, JSON.stringify(data));
+        }
+
+        function restoreFormFromLocal() {
+            if (!form) return;
+            const data = JSON.parse(localStorage.getItem(FORM_KEY) || 'null');
+            if (!data) return;
+
+            const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
+            elements.forEach(el => {
+                if (data[el.name] !== undefined && el.type !== 'file') {
+                    if (el.type === 'checkbox') el.checked = !!data[el.name];
+                    else el.value = data[el.name];
                 }
-                if (!data) return;
-                const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
-                elements.forEach(el => {
-                    const name = el.name;
-                    if (!name || !(name in data)) return;
-                    if (el.type === 'checkbox') {
-                        el.checked = !!data[name];
-                    } else if (el.type === 'radio') {
-                        el.checked = (el.value === data[name]);
-                    } else {
-                        el.value = data[name];
-                    }
-                });
-                // restore preview image (visual only)
-                if (data._anh_cccd_preview) {
+            });
+            // LƯU Ý: Đã xóa đoạn code khôi phục ảnh tại đây
+        }
+
+        // --- 4. SỰ KIỆN NGƯỜI DÙNG ---
+        
+        // Click vào box để chọn ảnh
+        uploadBox.addEventListener('click', function() {
+            if (previewContainer.style.display === 'none') fileInput.click();
+        });
+
+        // Khi chọn file xong -> Hiện ảnh preview (chỉ hiện tạm thời lúc đó)
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
                     previewContainer.style.display = 'flex';
-                    previewImg.src = data._anh_cccd_preview;
                     iconCamera.style.display = 'none';
                     iconPlus.style.display = 'none';
                     if (hintText) hintText.style.display = 'none';
                     uploadBox.style.backgroundColor = 'white';
+                    previewImg.src = evt.target.result;
+                    // Không gọi saveFormToLocal ở đây nữa để tránh lưu ảnh cache
                 }
+                reader.readAsDataURL(file);
             }
-
-            // hook inputs to save
-            function attachSaveListeners() {
-                if (!form) return;
-                const elements = form.querySelectorAll('input[name], select[name], textarea[name]');
-                elements.forEach(el => {
-                    if (el.type === 'file') return;
-                    el.addEventListener('input', saveFormToLocal);
-                    el.addEventListener('change', saveFormToLocal);
-                });
-            }
-
-            // clear saved form data
-            function clearSavedForm() {
-                try {
-                    localStorage.removeItem(FORM_KEY);
-                } catch (e) {}
-            }
-
-            // Image upload / preview handling
-            uploadBox.addEventListener('click', function() {
-                if (previewContainer.style.display === 'none') {
-                    fileInput.click();
-                }
-            });
-
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = function(evt) {
-                        previewContainer.style.display = 'flex';
-                        iconCamera.style.display = 'none';
-                        iconPlus.style.display = 'none';
-                        if (hintText) hintText.style.display = 'none';
-                        uploadBox.style.backgroundColor = 'white';
-                        previewImg.src = evt.target.result;
-                        saveFormToLocal(); // save preview (visual)
-                    }
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            btnRemove.addEventListener('click', function(e) {
-                e.stopPropagation();
-                fileInput.value = '';
-                previewContainer.style.display = 'none';
-                previewImg.src = '';
-                iconCamera.style.display = 'block';
-                iconPlus.style.display = 'block';
-                if (hintText) hintText.style.display = 'block';
-                uploadBox.style.backgroundColor = '#f2f6ff';
-                // remove stored preview
-                const stored = JSON.parse(localStorage.getItem(FORM_KEY) || '{}');
-                if (stored._anh_cccd_preview) delete stored._anh_cccd_preview;
-                try {
-                    localStorage.setItem(FORM_KEY, JSON.stringify(stored));
-                } catch (e) {}
-            });
-
-            // if there's a success alert on the page, clear stored form (registration succeeded)
-            const successAlert = document.querySelector('.alert--success');
-            if (successAlert) {
-                clearSavedForm();
-            } else {
-                // otherwise restore previous values (if any) and hook listeners
-                restoreFormFromLocal();
-                attachSaveListeners();
-            }
-
-            // Optional: clear saved form after successful redirect away from page
-            // When the form is submitted, we do not immediately clear storage because
-            // submission may fail and user would lose data; server-side success will
-            // render an alert and trigger the clearing above.
         });
-    </script>
+
+        // Nút Xóa ảnh: Gọi hàm Reset
+        btnRemove.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            e.stopPropagation();
+            resetUploadState(); 
+        });
+
+        // Lưu text khi nhập liệu
+        form.querySelectorAll('input, select').forEach(el => {
+            if (el.type !== 'file') el.addEventListener('change', saveFormToLocal);
+        });
+
+        // --- 5. LOGIC KHI TRANG VỪA TẢI XONG (QUAN TRỌNG NHẤT) ---
+        
+        // Bước A: Kiểm tra xem có phải đăng ký thành công không
+        const successAlert = document.querySelector('.alert--success');
+        
+        if (successAlert) {
+            // Nếu Thành công: Xóa sạch cả Text lẫn Ảnh
+            localStorage.removeItem(FORM_KEY);
+            resetUploadState(); 
+        } else {
+            // Nếu Thất bại hoặc Load thường: 
+            // 1. Khôi phục Text (để user đỡ phải gõ lại tên, sđt...)
+            restoreFormFromLocal();
+            
+            // 2. NHƯNG LUÔN LUÔN XÓA ẢNH (theo yêu cầu của bạn)
+            // Bất kể lỗi hay không, cứ load lại trang là ảnh bay màu
+            resetUploadState();
+        }
+    });
+</script>
 </body>
 
 </html>

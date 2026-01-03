@@ -35,8 +35,8 @@
         </header>
 
         <div class="tabs-container">
-            <button class="tab-btn active">Kho nhà đất</button>
-            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource-rent'">Kho nhà cho thuê</button>
+            <button class="tab-btn inactive" onclick="window.location.href='<?= BASE_URL ?>/superadmin/management-resource'">Kho nhà đất</button>
+            <button class="tab-btn active" >Kho nhà cho thuê</button>
         </div>
 
         <div class="toolbar-section">
@@ -97,26 +97,7 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
-                            $currentUser = \Auth::user();
-                            $currentUserId = $currentUser['id'] ?? 0;
-                            $postUserId = $p['user_id'] ?? 0;
-                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
-
-                            // --- LOGIC LỌC MỚI (QUAN TRỌNG) ---
-                            // Nếu có chọn bộ lọc xét duyệt và giá trị không phải 'all'
-                            // thì kiểm tra xem tin này có khớp không. Nếu không khớp -> Bỏ qua.
-                            if (!empty($filterApproval) && $filterApproval !== 'all') {
-                                if ($approvalStatus !== $filterApproval) {
-                                    continue; 
-                                }
-                            }
-
-                            // Logic cũ: Ẩn tin chưa duyệt của người khác (trừ khi là admin/superadmin đã xử lý ở backend)
-                            // Đoạn này giữ nguyên để đảm bảo user thường không thấy tin chưa duyệt của người khác
-                            // Nhưng nó chạy SAU khi đã lọc theo yêu cầu của user ở trên.
-                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
-                                continue;
-                            }
+                    
                             
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
                             $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';

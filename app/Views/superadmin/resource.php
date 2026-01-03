@@ -97,23 +97,11 @@
                         </tr>
                         <?php else :
                         foreach ($properties as $p) :
-                            $currentUser = \Auth::user();
-                            $currentUserId = $currentUser['id'] ?? 0;
-                            $postUserId = $p['user_id'] ?? 0;
-                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+                      
 
-                            // --- SỬA LỖI LỌC Ở ĐÂY: ƯU TIÊN KIỂM TRA BỘ LỌC TRƯỚC ---
-                            if (!empty($filterApproval) && $filterApproval !== 'all') {
-                                if ($approvalStatus !== $filterApproval) {
-                                    continue; // Bỏ qua nếu không khớp với trạng thái lọc
-                                }
-                            }
+                       
 
-                            // Logic phân quyền cũ (nếu không lọc hoặc lọc đúng thì mới check quyền)
-                            // (Ẩn tin "chờ duyệt" của người khác)
-                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
-                                continue;
-                            }
+               
                             
                             // ... Phần code hiển thị dữ liệu giữ nguyên ...
                             $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
