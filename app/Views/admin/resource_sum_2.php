@@ -56,8 +56,9 @@
 
                         <th style="width: 240px;">TIÊU ĐỀ</th>
 
-                        <th style="width: 100px;">LOẠI BĐS</th>
-                        <th style="width: 100px;">LOẠI KHO</th>
+                        <th style="width:120px;">HIỆN TRẠNG</th>
+                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+
                         <th style="width: 80px;">CÓ SỔ</th>
                         <th style="width: 120px;">MÃ SỔ</th>
                         <th style="width:100px;">DIỆN TÍCH</th>
@@ -67,9 +68,8 @@
                         <th style="width:80px">SỐ TẦNG</th>
                         <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
 
-                        <th style="width:120px;">HIỆN TRẠNG</th>
-
-                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+                        <th style="width: 100px;">LOẠI BĐS</th>
+                        <th style="width: 100px;">LOẠI KHO</th>
 
                         <th style="width: 120px;">MÃ HIỂN THỊ</th>
 
@@ -150,8 +150,9 @@
                                     <?= $tieu_de ?>
                                 </td>
 
-                                <td><?= htmlspecialchars($loai_bds) ?></td>
-                                <td><?= htmlspecialchars($loai_kho) ?></td>
+                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+                                <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
                                 <td><?= htmlspecialchars($phap_ly) ?></td>
                                 <td><?= $ma_so_so ?></td>
                                 <td><?= $dien_tich !== null ? rtrim(rtrim(number_format($dien_tich, 2, ',', '.'), '0'), ',') : '' ?></td>
@@ -161,9 +162,8 @@
                                 <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
                                 <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
 
-                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
-
-                                <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+                                <td><?= htmlspecialchars($loai_bds) ?></td>
+                                <td><?= htmlspecialchars($loai_kho) ?></td>
 
                                 <td><?= $code ?></td>
 
@@ -176,6 +176,7 @@
                 </tbody>
             </table>
         </div>
+
         <div class="pagination-container">
             <?php
             $queryParams = [];
@@ -318,6 +319,7 @@
                         });
 
                         // Gọi API để lấy danh sách BST đã lưu của tài nguyên này
+                        // (Để tick sẵn vào checkbox)
                         fetch(window.BASE_URL + '/admin/get-property-collections?id=' + window.currentPropertyId)
                             .then(function(r) {
                                 return r.json();
@@ -425,7 +427,7 @@
                     e.stopPropagation();
                     var tr = cell.closest('tr');
                     window.currentPropertyId = tr ? tr.getAttribute('data-id') : null;
-                    var currentStatus = cell.getAttribute('data-status');
+                    var currentStatus = '';
                     var select = qs('#edit-status-select');
                     if (select) select.value = currentStatus;
                     if (statusModal) statusModal.style.display = 'flex';

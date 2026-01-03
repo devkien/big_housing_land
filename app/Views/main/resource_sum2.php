@@ -45,131 +45,138 @@
         </div>
 
         <div class="table-wrapper" style="margin-bottom: 0;">
-            <table class="resource-table" style="min-width:1400px;">
-                <thead>
-                    <tr>
-                        <th style="padding-left:15px; width: 60px;">LƯU</th>
+    <table class="resource-table" style="min-width:1400px;">
+        <thead>
+            <tr>
+                <th style="padding-left:15px; width: 60px;">LƯU</th>
 
-                        <th style="width: 100px;">THỜI GIAN</th>
+                <th style="width: 80px; text-align: center;">HÀNH ĐỘNG</th>
 
-                        <th style="width: 240px;">TIÊU ĐỀ</th>
+                <th style="width: 100px;">THỜI GIAN</th>
 
-                        <th style="width: 100px;">LOẠI BĐS</th>
-                        <th style="width: 100px;">LOẠI KHO</th>
-                        <th style="width: 80px;">CÓ SỔ</th>
-                        <th style="width: 120px;">MÃ SỔ</th>
-                        <th style="width:100px;">DIỆN TÍCH</th>
-                        <th style="width:80px">ĐV</th>
-                        <th style="width:90px">CHIỀU DÀI</th>
-                        <th style="width:90px">CHIỀU RỘNG</th>
-                        <th style="width:80px">SỐ TẦNG</th>
-                        <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
+                <th style="width: 240px;">TIÊU ĐỀ</th>
 
-                        <th style="width:120px;">HIỆN TRẠNG</th>
+                <th style="width:120px;">HIỆN TRẠNG</th>
+                <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
 
-                        <th style="text-align:right; padding-right:15px;">ĐỊA CHỈ</th>
+                <th style="width: 80px;">CÓ SỔ</th>
+                <th style="width: 120px;">MÃ SỔ</th>
+                <th style="width:100px;">DIỆN TÍCH</th>
+                <th style="width:80px">ĐV</th>
+                <th style="width:90px">CHIỀU DÀI</th>
+                <th style="width:90px">CHIỀU RỘNG</th>
+                <th style="width:80px">SỐ TẦNG</th>
+                <th style="width:140px; text-align:right; padding-right:15px;">GIÁ CHÀO</th>
 
-                        <th style="width: 120px;">MÃ HIỂN THỊ</th>
+                <th style="width: 100px;">LOẠI BĐS</th>
+                <th style="width: 100px;">LOẠI KHO</th>
 
-                        <th style="width: 100px;">PHÒNG BAN</th>
+                <th style="width: 120px;">MÃ HIỂN THỊ</th>
+
+                <th style="width: 100px;">PHÒNG BAN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $statusMap = [
+                'ban_manh' => 'Bán mạnh',
+                'tam_dung_ban' => 'Tạm dừng',
+                'dung_ban' => 'Dừng bán',
+                'da_ban' => 'Đã bán',
+                'tang_chao' => 'Tăng chào',
+                'ha_chao' => 'Hạ chào'
+            ];
+            if (empty($properties)) :
+            ?>
+                <tr>
+                    <td colspan="19" style="text-align:center; padding:20px;">Không tìm thấy tài nguyên nào.</td>
+                </tr>
+                <?php else :
+                foreach ($properties as $p) :
+                    // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
+                    $currentUser = \Auth::user();
+                    $currentUserId = $currentUser['id'] ?? 0;
+                    $postUserId = $p['user_id'] ?? 0;
+                    $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+
+                    if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
+                        continue;
+                    }
+                    $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
+                    $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
+                    $statusKey = $p['trang_thai'] ?? '';
+                    $status = $statusMap[$statusKey] ?? ($statusKey ?: '');
+                    $address = trim($p['dia_chi_chi_tiet'] ?? '');
+                    if ($address === '') {
+                        $parts = array_filter([$p['tinh_thanh'] ?? '', $p['quan_huyen'] ?? '', $p['xa_phuong'] ?? '']);
+                        $address = htmlspecialchars(implode(', ', $parts));
+                    } else {
+                        $address = htmlspecialchars($address);
+                    }
+                ?>
+                    <?php
+                    // friendly labels / formatting
+                    $phong_ban = htmlspecialchars($p['phong_ban'] ?? '');
+                    $tieu_de = htmlspecialchars($p['tieu_de'] ?? '');
+                    $loai_bds_map = ['ban' => 'Bán', 'cho_thue' => 'Cho thuê'];
+                    $loai_bds = $loai_bds_map[$p['loai_bds'] ?? ''] ?? ($p['loai_bds'] ?? '');
+                    $loai_kho_map = ['kho_nha_dat' => 'Kho nhà đất', 'kho_cho_thue' => 'Kho cho thuê'];
+                    $loai_kho = $loai_kho_map[$p['loai_kho'] ?? ''] ?? ($p['loai_kho'] ?? '');
+                    $phap_ly_map = ['co_so' => 'Có sổ', 'khong_so' => 'Không sổ'];
+                    $phap_ly = $phap_ly_map[$p['phap_ly'] ?? ''] ?? ($p['phap_ly'] ?? '');
+                    $ma_so_so = htmlspecialchars($p['ma_so_so'] ?? '');
+                    $dien_tich = isset($p['dien_tich']) && $p['dien_tich'] !== null ? (float)$p['dien_tich'] : null;
+                    $don_vi = htmlspecialchars($p['don_vi_dien_tich'] ?? '');
+                    $chieu_dai = isset($p['chieu_dai']) && $p['chieu_dai'] !== null ? (float)$p['chieu_dai'] : null;
+                    $chieu_rong = isset($p['chieu_rong']) && $p['chieu_rong'] !== null ? (float)$p['chieu_rong'] : null;
+                    $so_tang = isset($p['so_tang']) && $p['so_tang'] !== null ? (int)$p['so_tang'] : null;
+                    $gia_chao = isset($p['gia_chao']) && $p['gia_chao'] !== null ? (float)$p['gia_chao'] : null;
+                    $gia_chao_fmt = $gia_chao !== null ? number_format($gia_chao, 0, ',', '.') . ' VND' : '';
+                    ?>
+                    <tr data-id="<?= htmlspecialchars($p['id']) ?>">
+                        <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
+                        
+                        <td style="padding-left:15px;">
+                            <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
+                        </td>
+
+                        <td style="text-align: center;">
+                            <i class="fa-regular fa-pen-to-square icon-note" data-status="<?= $statusKey ?>" style="cursor: pointer; color: #0044cc; font-size: 16px;" title="Cập nhật trạng thái"></i>
+                        </td>
+
+                        <td><?= $created ?></td>
+
+                        <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
+                            <?= $tieu_de ?>
+                        </td>
+
+                        <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
+                        <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
+
+                        <td><?= htmlspecialchars($phap_ly) ?></td>
+                        <td><?= $ma_so_so ?></td>
+                        <td><?= $dien_tich !== null ? rtrim(rtrim(number_format($dien_tich, 2, ',', '.'), '0'), ',') : '' ?></td>
+                        <td><?= $don_vi ?></td>
+                        <td><?= $chieu_dai !== null ? rtrim(rtrim(number_format($chieu_dai, 2, ',', '.'), '0'), ',') : '' ?></td>
+                        <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
+                        <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
+                        <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
+
+                        <td><?= htmlspecialchars($loai_bds) ?></td>
+                        <td><?= htmlspecialchars($loai_kho) ?></td>
+
+                        <td><?= $code ?></td>
+
+                        <td><?= $phong_ban ?></td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $statusMap = [
-                        'ban_manh' => 'Bán mạnh',
-                        'tam_dung_ban' => 'Tạm dừng',
-                        'dung_ban' => 'Dừng bán',
-                        'da_ban' => 'Đã bán',
-                        'tang_chao' => 'Tăng chào',
-                        'ha_chao' => 'Hạ chào'
-                    ];
-                    if (empty($properties)) :
-                    ?>
-                        <tr>
-                            <td colspan="18" style="text-align:center; padding:20px;">Không tìm thấy tài nguyên nào.</td>
-                        </tr>
-                        <?php else :
-                        foreach ($properties as $p) :
-                            // Lọc hiển thị: Chỉ hiện tin đã duyệt hoặc tin do chính người dùng đăng
-                            $currentUser = \Auth::user();
-                            $currentUserId = $currentUser['id'] ?? 0;
-                            $postUserId = $p['user_id'] ?? 0;
-                            $approvalStatus = $p['tinh_trang_duyet'] ?? 'cho_duyet';
+            <?php
+                endforeach;
+            endif;
+            ?>
+        </tbody>
+    </table>
+</div>
 
-                            if ($approvalStatus !== 'da_duyet' && $postUserId != $currentUserId) {
-                                continue;
-                            }
-                            $code = htmlspecialchars($p['ma_hien_thi'] ?? '');
-                            $created = !empty($p['created_at']) ? date('d/m/Y', strtotime($p['created_at'])) : '';
-                            $status = $statusMap[$p['trang_thai'] ?? ''] ?? ($p['trang_thai'] ?? '');
-                            $address = trim($p['dia_chi_chi_tiet'] ?? '');
-                            if ($address === '') {
-                                $parts = array_filter([$p['tinh_thanh'] ?? '', $p['quan_huyen'] ?? '', $p['xa_phuong'] ?? '']);
-                                $address = htmlspecialchars(implode(', ', $parts));
-                            } else {
-                                $address = htmlspecialchars($address);
-                            }
-                        ?>
-                            <?php
-                            // friendly labels / formatting
-                            $phong_ban = htmlspecialchars($p['phong_ban'] ?? '');
-                            $tieu_de = htmlspecialchars($p['tieu_de'] ?? '');
-                            $loai_bds_map = ['ban' => 'Bán', 'cho_thue' => 'Cho thuê'];
-                            $loai_bds = $loai_bds_map[$p['loai_bds'] ?? ''] ?? ($p['loai_bds'] ?? '');
-                            $loai_kho_map = ['kho_nha_dat' => 'Kho nhà đất', 'kho_cho_thue' => 'Kho cho thuê'];
-                            $loai_kho = $loai_kho_map[$p['loai_kho'] ?? ''] ?? ($p['loai_kho'] ?? '');
-                            $phap_ly_map = ['co_so' => 'Có sổ', 'khong_so' => 'Không sổ'];
-                            $phap_ly = $phap_ly_map[$p['phap_ly'] ?? ''] ?? ($p['phap_ly'] ?? '');
-                            $ma_so_so = htmlspecialchars($p['ma_so_so'] ?? '');
-                            $dien_tich = isset($p['dien_tich']) && $p['dien_tich'] !== null ? (float)$p['dien_tich'] : null;
-                            $don_vi = htmlspecialchars($p['don_vi_dien_tich'] ?? '');
-                            $chieu_dai = isset($p['chieu_dai']) && $p['chieu_dai'] !== null ? (float)$p['chieu_dai'] : null;
-                            $chieu_rong = isset($p['chieu_rong']) && $p['chieu_rong'] !== null ? (float)$p['chieu_rong'] : null;
-                            $so_tang = isset($p['so_tang']) && $p['so_tang'] !== null ? (int)$p['so_tang'] : null;
-                            $gia_chao = isset($p['gia_chao']) && $p['gia_chao'] !== null ? (float)$p['gia_chao'] : null;
-                            $gia_chao_fmt = $gia_chao !== null ? number_format($gia_chao, 0, ',', '.') . ' VND' : '';
-                            ?>
-                            <tr data-id="<?= htmlspecialchars($p['id']) ?>">
-                                <?php $inCount = isset($collectionMap[(int)$p['id']]) ? (int)$collectionMap[(int)$p['id']] : 0; ?>
-                                
-                                <td style="padding-left:15px;">
-                                    <i class="<?= $inCount > 0 ? 'fa-solid' : 'fa-regular' ?> fa-bookmark icon-save" style="<?= $inCount > 0 ? 'color:#ffcc00' : '' ?>" title="<?= $inCount > 0 ? 'Đã lưu (' . $inCount . ')' : 'Chưa lưu' ?>"></i>
-                                </td>
-
-                                <td><?= $created ?></td>
-
-                                <td style="cursor:pointer; color:#0b66ff; font-weight:bold;" onclick="window.location.href='<?= BASE_URL ?>/admin/detail?id=<?= htmlspecialchars($p['id']) ?>'">
-                                    <?= $tieu_de ?>
-                                </td>
-
-                                <td><?= htmlspecialchars($loai_bds) ?></td>
-                                <td><?= htmlspecialchars($loai_kho) ?></td>
-                                <td><?= htmlspecialchars($phap_ly) ?></td>
-                                <td><?= $ma_so_so ?></td>
-                                <td><?= $dien_tich !== null ? rtrim(rtrim(number_format($dien_tich, 2, ',', '.'), '0'), ',') : '' ?></td>
-                                <td><?= $don_vi ?></td>
-                                <td><?= $chieu_dai !== null ? rtrim(rtrim(number_format($chieu_dai, 2, ',', '.'), '0'), ',') : '' ?></td>
-                                <td><?= $chieu_rong !== null ? rtrim(rtrim(number_format($chieu_rong, 2, ',', '.'), '0'), ',') : '' ?></td>
-                                <td><?= $so_tang !== null ? (int)$so_tang : '' ?></td>
-                                <td style="text-align:right; padding-right:15px;"><?= htmlspecialchars($gia_chao_fmt) ?></td>
-
-                                <?php $statusKey = htmlspecialchars($p['trang_thai'] ?? ''); ?>
-                                <td><span class="status-badge strong <?= $statusKey ? 'status-badge--' . $statusKey : '' ?>"><?= htmlspecialchars($status) ?></span></td>
-
-                                <td style="text-align:right; padding-right:15px;"><?= $address ?></td>
-
-                                <td><?= $code ?></td>
-
-                                <td><?= $phong_ban ?></td>
-                            </tr>
-                    <?php
-                        endforeach;
-                    endif;
-                    ?>
-                </tbody>
-            </table>
-        </div>
         <div class="pagination-container">
             <?php
             $queryParams = [];

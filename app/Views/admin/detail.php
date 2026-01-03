@@ -14,7 +14,7 @@
     <div class="app-container" style="background: white;">
 
         <header class="detail-header">
-            <a href="<?= BASE_URL ?>/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <a href="<?= BASE_URL ?>/admin/home" class="header-icon-btn"><i class="fa-solid fa-chevron-left"></i></a>
             <div class="detail-title">Chi tiết</div>
             <div class="header-icon-btn"></div>
         </header>
